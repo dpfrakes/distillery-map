@@ -9,3 +9,29 @@ source ~/.virtualenv/scotland/bin/activate
 pip install -r requirements.txt
 ./manage.py runserver
 ```
+
+### Notes
+
+Data attributes
+
+```
+distillery
+lat
+long
+location (town)
+region
+owner (recursive?)
+year est
+year closed
+year demolished
+inactive date range 1
+inactive date range 2
+inactive date range 3
+tour hours
+```
+
+### Feature Ideas
+
+[ ] Latest products
+[ ] Tour hours
+[ ] Production estimate (liters produced annually)
