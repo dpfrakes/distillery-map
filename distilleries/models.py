@@ -3,8 +3,7 @@ from django.db import models
 
 class Distillery(models.Model):
     name = models.CharField(
-        max_length=50,
-        blank=True, null=True)
+        max_length=50)
     location = models.CharField(
         max_length=40,
         blank=True, null=True)
@@ -13,6 +12,10 @@ class Distillery(models.Model):
         blank=True, null=True)
     owner = models.CharField(
         max_length=60,
+        blank=True, null=True)
+    year_closed = models.IntegerField(
+        blank=True, null=True)
+    year_demolished = models.IntegerField(
         blank=True, null=True)
     latitude = models.DecimalField(
         max_digits=5,
@@ -24,4 +27,4 @@ class Distillery(models.Model):
         blank=True, null=True)
 
     class Meta:
-    	verbose_name_plural = 'Distilleries'
+        verbose_name_plural = 'Distilleries'
