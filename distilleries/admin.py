@@ -1,3 +1,9 @@
 from django.contrib import admin
 
-# Register your models here.
+
+from distilleries.models import Distillery
+
+class DistilleryAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Distillery, DistilleryAdmin)
