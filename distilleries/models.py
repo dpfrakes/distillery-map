@@ -28,3 +28,7 @@ class Distillery(models.Model):
 
     class Meta:
         verbose_name_plural = 'Distilleries'
+
+# TODO make this a ManyToOne for Distillery (or individual whiskies?)
+# class TasteProfile(models.Model):
+#     pass

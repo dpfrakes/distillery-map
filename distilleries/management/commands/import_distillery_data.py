@@ -4,7 +4,7 @@ from distilleries.models import Distillery
 
 
 class Command(BaseCommand):
-    help = 'Import initial distillery data'
+    help = 'Import initial distillery data from Wikipedia'
 
     def handle(self, *args, **options):
 
