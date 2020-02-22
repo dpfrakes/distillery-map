@@ -14,7 +14,7 @@
 
   svg {
     border: 1px solid red;
-    background: rgba(0,0,0,0);
+    background: rgba(0, 0, 0, 0);
   }
 
   #map .country {
@@ -30,8 +30,8 @@
   document.addEventListener('DOMContentLoaded', function() {
 
     // Define map size on screen
-    var width = 700,
-      height = 800,
+    var width = 698,
+      height = 1032,
       svg, g, path;
 
     svg = d3.select("body svg")
@@ -48,7 +48,7 @@
     projection = d3.geoMercator()
       .scale(5000)
       // .center(237922, 692419)
-      .translate([760, 6500]); /* basically arbitrary, trial and error to find these values */
+      .translate([760, 6740]); /* basically arbitrary, trial and error to find these values */
 
     path = d3.geoPath()
       .projection(projection);
@@ -71,23 +71,36 @@
         .attr("class", "country")
         .attr("d", path);
 
+      // points
+      bowmore = [55.75602, -6.28381];
+      auchentoshen = [55.92237, -4.43934];
+      jura = [55.83301, -5.95143];
+
+      tomatin = [57.34110, -4.01003];
+      highland_park = [58.96701, -2.95222];
+
+      console.log(projection(bowmore));
+
+      // add states from topojson
+      // svg.selectAll("path")
+      //   .data(scotland).enter()
+      //   .append("path")
+      //   .attr("class", "feature")
+      //   .style("fill", "steelblue")
+      //   .attr("d", path);
+
+      // Add distillery locations to map
+      svg.selectAll("circle")
+        .data([bowmore, auchentoshen, jura, tomatin, highland_park])
+        .enter()
+        .append("circle")
+        .attr("cx", function(d) { console.log(projection(d)); return projection(d)[0] - 5400; })
+        .attr("cy", function(d) { return projection(d)[1] - 6440; })
+        // .attr("cx", function(d) { console.log(projection(d)); return projection(d)[1] - 6640; })
+        // .attr("cy", function(d) { return projection(d)[0] - 5400; })
+        .attr("r", "3px")
+        .attr("fill", "red");
     }
-
-    // g.append("rect") // the canvas frame
-    //   .attr("x", 0).attr("y", 0)
-    //   .attr("class", "map_canvas")
-    //   .attr("width", width).attr("height", height);
-    // const cellWidth = width / 9.0;
-    // const cellHeight = height / 10.0;
-    // var rectsXY = []
-    // for (let i = 0; i < 9; i++)
-    //   for (let j = 0; j < 10; j++)
-    //     rectsXY.push({ "x": cellWidth * i, "y": cellHeight * j });
-    // g.selectAll().data(rectsXY).enter().append("rect")
-    //   .attr("x", d => d.x).attr("y", d => d.y)
-    //   .attr("class", "map_gridCell")
-    //   .attr("width", cellWidth).attr("height", cellHeight);
-
   });
   </script>
 </head>

@@ -71,3 +71,11 @@ https://mapshaper.org/
 Click-and-drag is great.
 
 I should probably migrate the d3/js to ES2019 once I get it working...
+
+### Debugging Projection
+
+So I finally got the map looking okay through lots of trial and error with the SVG scaling and translating, though values for these operations seemed arbitrary.
+
+I added a few distilleries' coordinates manually to see how they lined up, and it required more translating (no scaling since they're points instead of polygons). However, even when all test points were visible and on the map, the locations didn't seem right (based on my own geographic knowledge and a sanity check from Wikimedia's map).
+
+Still debugging why the line of select distilleries seems to be an east/west trajectory instead of a north/south one. This seems to suggest I have lat/long reversed but the points don't look like they'd line up better flipping over the x=y axis. TBD.
