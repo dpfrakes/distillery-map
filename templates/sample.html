@@ -1,0 +1,151 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Scottish Distilleries</title>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="https://d3js.org/topojson.v1.min.js"></script>
+  <style>
+  body, svg {
+    background: #333;
+  }
+
+  svg { border: 1px solid red; margin: auto; width: 100%; }
+
+  #map .state {
+    fill: #eee;
+    fill-opacity: 0.6;
+    stroke-width: 0.5;
+    /* 0.25 to 5 */
+    opacity: 0.6;
+    /*  0 to 0.5 */
+  }
+
+  #map .state:hover {
+    fill: #66f;
+  }
+
+  #map .state_contour {
+    fill: none;
+    stroke: black;
+    stroke-linejoin: round;
+  }
+  </style>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+
+    // Define map size on screen
+    var width = 800,
+      height = 1000,
+      svg, g, path;
+
+    svg = d3.select("body svg")
+      .attr("width", width)
+      .attr("height", height);
+
+    g = svg.append("g");
+
+    console.log('loading JSON...');
+
+    d3.json("{% static 'json/argyll-bute.json' %}").then(ready);
+
+    // Align map
+    projection = d3.geoMercator()
+      .scale(17000)
+      // .center(237922, 692419)
+      .translate([2100, 20700]); /* basically arbitrary, trial and error to find these values */
+
+    path = d3.geoPath()
+      .projection(projection);
+
+    d3.select(self.frameElement).style("height", height + "px");
+    g.attr("id", "map");
+
+    function ready(shp, err) {
+
+      // DF
+      console.log('shp loaded');
+      console.log(shp);
+
+      // Extracting polygons and contours
+      var states = topojson.feature(shp, shp.objects.S12000035);
+      console.info('states');
+      console.info(states);
+
+      // Argyll and Bute file ONLY
+      // var minX = Number.MAX_SAFE_INTEGER;
+      // var maxX = Number.MIN_SAFE_INTEGER;
+      // var minY = Number.MAX_SAFE_INTEGER;
+      // var maxY = Number.MIN_SAFE_INTEGER;
+
+      // states.features[0].geometry.coordinates.forEach(function(a) {
+      //   a.forEach(function(c) {
+      //     c.forEach(function(i) {
+      //       // console.log(i);
+      //       // console.log(i[0]);
+      //       // console.log('-')
+      //       if (i[0] < minX) minX = i[0]
+      //       if (i[0] > minX) maxX = i[0]
+      //       if (i[1] < minY) minY = i[1]
+      //       if (i[1] > minY) maxY = i[1]
+      //     });
+      //   });
+      // });
+      // console.log('extreme coordinates:')
+      // console.log([[minX, minY], [maxX, maxY]]);
+      // end A&B only logic
+
+      // var states_contour = topojson.mesh(shp, shp.objects.S12000035);
+      // console.info('states_contour');
+      // console.info(states_contour);
+
+      console.warn('path:');
+      console.warn(path);
+
+      // Desenhando estados
+      g.selectAll(".state")
+        .data(states.features)
+        .enter()
+        .append("path")
+        .attr("class", "state")
+        .attr("d", path);
+
+      // g.append("path")
+      //   .datum(states_contour)
+      //   .attr("d", path)
+      //   .attr("class", "state_contour");
+
+      console.log('done!');
+
+      console.info(`bbox: ${shp.bbox}`);
+      center = [(shp.bbox[0] + shp.bbox[2]) / 2, (shp.bbox[1] + shp.bbox[3]) / 2]
+      console.info(`center: ${center}`);
+    }
+
+    // g.append("rect") // the canvas frame
+    //   .attr("x", 0).attr("y", 0)
+    //   .attr("class", "map_canvas")
+    //   .attr("width", width).attr("height", height);
+    // const cellWidth = width / 9.0;
+    // const cellHeight = height / 10.0;
+    // var rectsXY = []
+    // for (let i = 0; i < 9; i++)
+    //   for (let j = 0; j < 10; j++)
+    //     rectsXY.push({ "x": cellWidth * i, "y": cellHeight * j });
+    // g.selectAll().data(rectsXY).enter().append("rect")
+    //   .attr("x", d => d.x).attr("y", d => d.y)
+    //   .attr("class", "map_gridCell")
+    //   .attr("width", cellWidth).attr("height", cellHeight);
+
+  });
+  </script>
+</head>
+
+<body>
+  <h3>Scotland Topojson</h3>
+  <svg>
+</body>
+
+</html>
