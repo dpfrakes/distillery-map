@@ -31,13 +31,14 @@ https://medium.com/@mbostock/command-line-cartography-part-1-897aa8f8ca2c
 So back to my own alma mater:
     - https://www.youtube.com/watch?v=aNbgrqRuoiE
 
+### Source
+
+https://martinjc.github.io/UK-GeoJSON/
 
 ### Simplify!
 
-```
 https://bost.ocks.org/mike/simplify/
 https://www.jasondavies.com/simplify/
-```
 
 ### Get Data as Topojson
 
@@ -76,6 +77,42 @@ I should probably migrate the d3/js to ES2019 once I get it working...
 
 So I finally got the map looking okay through lots of trial and error with the SVG scaling and translating, though values for these operations seemed arbitrary.
 
+##### Debugging with points
+
 I added a few distilleries' coordinates manually to see how they lined up, and it required more translating (no scaling since they're points instead of polygons). However, even when all test points were visible and on the map, the locations didn't seem right (based on my own geographic knowledge and a sanity check from Wikimedia's map).
 
+another resource
+https://github.com/OrdnanceSurvey/GeoDataViz-Toolkit
+
 Still debugging why the line of select distilleries seems to be an east/west trajectory instead of a north/south one. This seems to suggest I have lat/long reversed but the points don't look like they'd line up better flipping over the x=y axis. TBD.
+
+plotted some points where I know they should be, even updated the test data manually (from datascienceblog.net's dataset) to match exactly with manual Google Maps searches for the distilleries.
+
+Aha!
+
+It's not the wrong projection, it looks like it's using a different geographic coordinate system (json file from UK office coordinate system != google maps coordinates)
+
+This would explain why my painstakingly curated coordinates of Bowmore distillery in Scotland are way off:
+`Screenshot from 2020-02-22 11-38-05.png`
+https://community.esri.com/thread/191774-converting-geographic-coordinate-system
+
+
+----
+
+Decided to move on since I wasn't getting anywhere with debugging the projections/coordinate systems.
+
+Implemented click and drag + zoom functionality with d3.zoom and d3.drag libraries - pretty darn easy.
+
+```html
+<script src="https://d3js.org/d3-drag.v1.min.js"></script>
+<script src="https://d3js.org/d3-zoom.v1.min.js"></script>
+```
+
+```js
+svg.call(d3.zoom().on('zoom', function() {
+  g.attr("transform", d3.event.transform);
+}));
+```
+
+but zoom wasn't applying to distillery points, so I needed to put the circles on the same `<g>` parent element as `<path>` (instead of directly onto `<svg>`)
+  

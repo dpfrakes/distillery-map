@@ -6,6 +6,8 @@
   <meta charset="utf-8">
   <title>Scottish Distilleries</title>
   <script src="https://d3js.org/d3.v5.min.js"></script>
+  {# <script src="https://d3js.org/d3-array.v1.min.js"></script> #}
+  {# <script src="https://d3js.org/d3-geo.v1.min.js"></script> #}
   <script src="https://d3js.org/topojson.v1.min.js"></script>
   <style>
   body {
@@ -45,10 +47,10 @@
     d3.json("{% static 'json/topo-scotland.json' %}").then(ready);
 
     // Align map
-    projection = d3.geoMercator()
+    projection = d3.geoConicEqualArea()
       .scale(5000)
       // .center(237922, 692419)
-      .translate([760, 6740]); /* basically arbitrary, trial and error to find these values */
+      .translate([560, 2740]); /* basically arbitrary, trial and error to find these values */
 
     path = d3.geoPath()
       .projection(projection);
