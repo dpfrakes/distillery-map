@@ -11,13 +11,41 @@ var colors = {
 document.addEventListener('DOMContentLoaded', function() {
 
   // Define map size on screen
-  var width = window.innerWidth / 2,
-    height = window.innerHeight - 50,
-    svg, g, path;
+  var width, height, svg, g, path, projection;
 
-  // Set width/height of map cover dynamically
-  document.getElementById('map-cover').style.width = width / 10 + 'px';
-  document.getElementById('map-cover').style.height = height + 'px';
+  // Override dimensions for mobile
+  if (mobilecheck()) {
+    width = window.innerWidth;
+    height = window.innerHeight;
+
+    // Set full width
+    document.getElementById('map-container').style.width = '100%';
+
+    // Hide cover
+    document.getElementById('map-cover').style.display = 'none';
+
+    // Mobile projection
+    projection = d3.geoMercator()
+      .translate([width - 200, height / 2 + 4800])
+      .scale(4000);
+
+  } else {
+    width = window.innerWidth / 2;
+    height = window.innerHeight - 50;
+
+    // Set half width
+    document.getElementById('map-container').style.width = '50%';
+    document.getElementById('map-container').style.float = 'right';
+
+    // Set width/height of map cover dynamically
+    document.getElementById('map-cover').style.width = width / 10 + 'px';
+    document.getElementById('map-cover').style.height = height + 'px';
+
+    // Desktop projection
+    projection = d3.geoMercator()
+      .translate([width / 2 + 400, height * 5 + 2100])
+      .scale(4800);
+  }
 
   svg = d3.select("body svg")
     .attr("width", width)
@@ -26,11 +54,6 @@ document.addEventListener('DOMContentLoaded', function() {
   g = svg.append("g");
 
   d3.json(mapFile).then(ready);
-
-  // Align map
-  projection = d3.geoMercator()
-    .translate([width / 2 + 400, height * 5 + 2100])
-    .scale(4800);
 
   path = d3.geoPath()
     .projection(projection);
