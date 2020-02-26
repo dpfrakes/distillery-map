@@ -24,6 +24,7 @@
   svg {
     border: 1px solid red;
     background: rgba(0, 0, 0, 0);
+    float: right;
   }
 
   circle.distillery {
@@ -79,8 +80,8 @@
   document.addEventListener('DOMContentLoaded', function() {
 
     // Define map size on screen
-    var width = 500,
-      height = 800,
+    var width = window.innerWidth / 2,
+      height = window.innerHeight - 50,
       svg, g, path;
 
     svg = d3.select("body svg")
@@ -93,8 +94,8 @@
 
     // Align map
     projection = d3.geoMercator()
-      .translate([width / 2 + 230, height * 5 + 100])
-      .scale(3000);
+      .translate([width / 2 + 400, height * 5 + 2100])
+      .scale(4800);
 
     path = d3.geoPath()
       .projection(projection);
@@ -121,7 +122,7 @@
         .attr("class", "distillery")
         .attr("cx", (d) => projection(d.coordinates)[0])
         .attr("cy", (d) => projection(d.coordinates)[1])
-        .attr("r", "2px")
+        .attr("r", zoomScale + "px")
         .attr("fill", (d) => colors[d.region])
         .attr("data-name", (d) => d.name)
         .attr("data-region", (d) => d.region)
