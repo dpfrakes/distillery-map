@@ -115,4 +115,57 @@ svg.call(d3.zoom().on('zoom', function() {
 ```
 
 but zoom wasn't applying to distillery points, so I needed to put the circles on the same `<g>` parent element as `<path>` (instead of directly onto `<svg>`)
-  
+
+
+# Wow
+
+Got it. `d3.geoMercator()` projection means it's showingthe map of the whole world in Mercator projection.
+
+I only have Scotland data.
+
+So it's showing Scotland in its size and location relative to a regular world map (Mercator) :slam:
+
+I'm an idiot.
+
+### Testing new understanding
+
+Use geoMercator projection, no scaling or translating
+
+Based on d3 github wiki docs, projection is based on 960x500 map, so use `width=960, height=500`
+
+Plot Scotland with no scale/translate/transform, then add points going [0, 0] to [90, 0]... then [0, 0] to [0, 90]
+
+(screenshots)
+
+Then apply projection to CENTER OF EARTH (0, 0), which looks like it's actually 0 meaning on the equator, but also 0 meaning exactly on left border of map... :thinking:
+
+**I WAS FLIPPING X/Y BUT APPLYING PROJECTION BEFORE THAT FIX (USING 0/1 INDICES OF PROJECTION(d))**
+
+FML
+
+Before
+
+```
+      bowmore = [55.75602, -6.28381];
+      auchentoshen = [55.92237, -4.43934];
+      jura = [55.83301, -5.95143];
+      tomatin = [57.34110, -4.01003];
+      highland_park = [58.96701, -2.95222];
+      points = [bowmore, auchentoshen, jura, tomatin, highland_park]
+```
+
+
+After
+
+```
+      bowmore = [55.75602, -6.28381];
+      auchentoshen = [55.92237, -4.43934];
+      jura = [55.83301, -5.95143];
+      tomatin = [57.34110, -4.01003];
+      highland_park = [58.96701, -2.95222];
+      points = [bowmore, auchentoshen, jura, tomatin, highland_park]
+      points = points.map((c) => [c[1], c[0]])
+```
+
+
+
