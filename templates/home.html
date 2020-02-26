@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html>
 
@@ -11,49 +12,18 @@
   <script src="https://d3js.org/d3-drag.v1.min.js"></script>
   <script src="https://d3js.org/d3-zoom.v1.min.js"></script>
   <script src="https://d3js.org/topojson.v1.min.js"></script>
-  <style>
-  body {
-    background: #222;
-  }
 
-  .debug {
-    background: #fff;
-    padding: 10px;
-  }
-
-  svg {
-    border: 1px solid red;
-    background: rgba(0, 0, 0, 0);
-    float: right;
-  }
-
-  circle.distillery {
-    cursor: pointer;
-  }
-
-  circle.distillery > div.tooltip {
-    display: none;
-  }
-
-  circle.distillery:hover > div.tooltip {
-    display: block;
-  }
-
-  #map .country {
-    fill: #ddd;
-    fill-opacity: 0.6;
-    stroke-width: 0.5;
-    /* 0.25 to 5 */
-    opacity: 0.6;
-    /*  0 to 0.5 */
-  }
-  </style>
+  <link rel="stylesheet" type="text/css" href="{% static "css/scotland.css" %}">
 
 </head>
 
 <body>
   <p id="mouse-coordinates" class="debug">x: -- y: --</p>
-  <svg></svg>
+
+  <div id="map-container">
+    <div id="map-cover"></div>
+    <svg id="map-svg"></svg>
+  </div>
 
   <script>
   var distilleries = [];
@@ -83,6 +53,10 @@
     var width = window.innerWidth / 2,
       height = window.innerHeight - 50,
       svg, g, path;
+
+    // Set width/height of map cover dynamically
+    document.getElementById('map-cover').style.width = width / 10 + 'px';
+    document.getElementById('map-cover').style.height = height + 'px';
 
     svg = d3.select("body svg")
       .attr("width", width)
