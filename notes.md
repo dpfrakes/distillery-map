@@ -168,4 +168,30 @@ After
 ```
 
 
+### Scaling whole thing
 
+Ok now points are lined up.
+
+To scale projection, I figured `scale(2)` meant 2x (200%), or _maybe_ 2% (x0.02).
+
+Nope, docs say scaling factor "depends on projection" :slam:
+
+So to the source code for geoMercator we go...
+
+And it's `961 / tau` = `961 / (Math.PI * 2)` ≈ 152.9
+
+Sure enough, `scale(153)` is the same as ommitting `scale()` entirely. VINDICATION!
+
+So maybe 300 = 2x? Yep, looks like it (screenshots)
+
+(scale___.png) <-- dragged to center for size comparison only
+
+So now I should be able to edit the width/height of the SVG container along with the scale and reasonably get an appropriate sized Scotland with some trial and error.
+
+### Redraw
+
+On zoom, circle isn't scaling in size (1px radius looks like 300px when zoomed way in)
+
+Solution: redraw circle by removing it and re-appending it to `<g>` on zoom event listener.
+
+Exact formula for decent dynamic px value is TBD, but by trial and error, `2 / Math.sqrt(scale)` seems to be okay.
