@@ -1,5 +1,8 @@
 from django.db import models
+from django.contrib.gis.geos import Point
+from location_field.models.spatial import LocationField
 
+from .util import format_coordinates
 
 class Distillery(models.Model):
     name = models.CharField(
@@ -28,6 +31,7 @@ class Distillery(models.Model):
         max_digits=8,
         decimal_places=5,
         blank=True, null=True)
+    geolocation = LocationField(based_fields=['name'])
 
     class Meta:
         verbose_name_plural = 'Distilleries'
@@ -36,14 +40,10 @@ class Distillery(models.Model):
        return self.name
 
     def coordinates(self):
-        if self.latitude and self.longitude:
-            lat_deg = int(self.latitude)
-            lat_min = abs(int((self.latitude % 1) * 60))
-            lat_sec = abs(int((((self.latitude % 1) * 60) % 1) * 60))
-            lng_deg = int(self.longitude)
-            lng_min = abs(int((self.longitude % 1) * 60))
-            lng_sec = abs(int((((self.longitude % 1) * 60) % 1) * 60))
-            return f'{lat_deg}°{lat_min}\'{lat_sec}" {lng_deg}°{lng_min}\'{lng_sec}" '
+        if self.geolocation:
+            return format_coordinates(self.geolocation.x, self.geolocation.y)
+        elif self.latitude and self.longitude:
+            return format_coordinates(self.latitude, self.longitude)
         return '--'
 
 # TODO make this a ManyToOne for Distillery (or individual whiskies?)

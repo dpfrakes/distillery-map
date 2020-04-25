@@ -1,4 +1,5 @@
 import pandas as pd
+from geopy.geocoders import Nominatim
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
@@ -217,5 +218,11 @@ class Command(BaseCommand):
         for index, row in df.iterrows():
             coordinates = {'longitude': row['lat'], 'latitude': row['long']}
             d, created = Distillery.objects.update_or_create(name=row['Distillery'], defaults=coordinates)
+        
+        # After importing data, try updating lat/long for other distilleries using geocoder
+        geolocator = Nominatim(user_agent="")
+        for distillery in Distillery.objects.filter(geolocation__isnull=True):
+            location = geolocator.geocode(distillery.name)
+            print(location)
 
         print(f'{Distillery.objects.count()} distilleries imported')

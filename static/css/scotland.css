@@ -1,63 +1,79 @@
 body {
-    background: #222;
-    margin: 0;
+  background: #222;
+  margin: 0;
 }
 
 .debug {
-	position: absolute;
-	top: 10px;
-	left: 10px;
-	width: 200px;
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: 200px;
   background: #fff;
-  padding: 10px;
+}
+
+#search {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 1;
+}
+
+#search #searchbar {
+  padding: 5px;
 }
 
 #map-container {
-	position: relative;
+  position: relative;
+  width: 100%;
 }
 
-#map-cover {
-	position: absolute;
-	top: 0;
-	left: 0;
-	background: linear-gradient(to left, rgba(0, 0, 0, 0), #222);
-	z-index: 2;
-	pointer-events: none;
-}
+/* #map-cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: linear-gradient(to left, rgba(0, 0, 0, 0), #222);
+  z-index: 20;
+  pointer-events: none;
+} */
 
-#map-svg {
-    border: 1px solid red;
-    background: rgba(0, 0, 0, 0);
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-}
+/* #map-svg {
+  border: 1px solid red;
+  background: rgba(0, 0, 0, 0);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 99vh;
+} */
 
 @media (max-width: 600px) {
-	#map-cover {
-		display: none;
-	}
-}
-
-circle.distillery {
-    cursor: pointer;
-}
-
-circle.distillery>div.tooltip {
+  #map-cover {
     display: none;
+  }
 }
 
-circle.distillery:hover>div.tooltip {
-    display: block;
+.distillery {
+  cursor: pointer;
+}
+
+.distillery:hover {
+  fill: #444;
+}
+
+.distillery > div.tooltip {
+  display: none;
+}
+
+.distillery:hover > div.tooltip {
+  display: block;
 }
 
 #map .country {
-    fill: #ddd;
-    fill-opacity: 0.6;
-    stroke-width: 0.5;
-    /* 0.25 to 5 */
-    opacity: 0.6;
-    /*  0 to 0.5 */
+  fill: #ddd;
+  fill-opacity: 0.6;
+  stroke-width: 0.5;
+  /* 0.25 to 5 */
+  opacity: 0.6;
+  /*  0 to 0.5 */
 }

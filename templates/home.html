@@ -12,36 +12,43 @@
   <script src="https://d3js.org/d3-drag.v1.min.js"></script>
   <script src="https://d3js.org/d3-zoom.v1.min.js"></script>
   <script src="https://d3js.org/topojson.v1.min.js"></script>
-
-  <link rel="stylesheet" type="text/css" href="{% static "css/scotland.css" %}">
+  <link rel="stylesheet" href="{% static 'css/scotland.css' %}">
 
   <script src="{% static "js/util.js" %}"></script>
 
 </head>
 
 <body>
-  <p id="mouse-coordinates" class="debug">x: -- y: --</p>
 
+  {# {% include "partial/searchbar.html" %} #}
+
+  <div id="root"></div>
+
+  {% comment %}
   <div id="map-container">
-    <div id="map-cover"></div>
     <svg id="map-svg"></svg>
   </div>
 
   <script>
-  var distilleries = [];
+  var distilleries = {{ distilleries|safe }};
   var mapFile = "{% static 'json/topo-scotland.json' %}";
 
-  {% for distillery in distilleries %}
-  distilleries.push({
-    name: '{{ distillery.name }}',
-    coordinates: [parseFloat('{{ distillery.longitude }}'), parseFloat('{{ distillery.latitude }}')],
-    region: '{{ distillery.region|default:"Other" }}',
-    year_established: '{{ distillery.year_established|default:"Unknown" }}',
-  });
-  {% endfor %}
+  // {% for distillery in distilleries %}
+  // distilleries.push({
+  //   name: '{{ distillery.name }}',
+  //   coordinates: [parseFloat('{{ distillery.longitude }}'), parseFloat('{{ distillery.latitude }}')],
+  //   region: '{{ distillery.region|default:"Other" }}',
+  //   year_established: '{{ distillery.year_established|default:"Unknown" }}',
+  // });
+  // {% endfor %}
   </script>
 
-  <script src="{% static "js/scotland.js" %}"></script>
+  {% endcomment%}
+
+  <!-- <script src="{% static "js/scotland.js" %}"></script>
+  <script src="{% static "js/animation.js" %}"></script> -->
+  <script src="{% static "main.js" %}"></script>
+
 </body>
 
 </html>

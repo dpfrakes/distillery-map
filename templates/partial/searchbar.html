@@ -1,0 +1,17 @@
+<div id="search">
+
+  <form action="/search/" method="POST">
+    {% csrf_token %}
+    <input type="text" name="q" id="searchbar" />
+    <input type="submit" />
+  </form>
+
+  <div id="autocomplete-results">
+    <!-- TODO on searchbar keypress, search up to 5 distilleries -->
+  </div>
+
+  <div id="options">
+    <ul></ul>
+  </div>
+
+</div>

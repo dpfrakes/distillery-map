@@ -77,7 +77,7 @@ I should probably migrate the d3/js to ES2019 once I get it working...
 
 So I finally got the map looking okay through lots of trial and error with the SVG scaling and translating, though values for these operations seemed arbitrary.
 
-##### Debugging with points
+#### Debugging with points
 
 I added a few distilleries' coordinates manually to see how they lined up, and it required more translating (no scaling since they're points instead of polygons). However, even when all test points were visible and on the map, the locations didn't seem right (based on my own geographic knowledge and a sanity check from Wikimedia's map).
 
@@ -95,7 +95,6 @@ It's not the wrong projection, it looks like it's using a different geographic c
 This would explain why my painstakingly curated coordinates of Bowmore distillery in Scotland are way off:
 `Screenshot from 2020-02-22 11-38-05.png`
 https://community.esri.com/thread/191774-converting-geographic-coordinate-system
-
 
 ----
 
@@ -116,8 +115,7 @@ svg.call(d3.zoom().on('zoom', function() {
 
 but zoom wasn't applying to distillery points, so I needed to put the circles on the same `<g>` parent element as `<path>` (instead of directly onto `<svg>`)
 
-
-# Wow
+## Wow
 
 Got it. `d3.geoMercator()` projection means it's showingthe map of the whole world in Mercator projection.
 
@@ -139,13 +137,11 @@ Plot Scotland with no scale/translate/transform, then add points going [0, 0] to
 
 Then apply projection to CENTER OF EARTH (0, 0), which looks like it's actually 0 meaning on the equator, but also 0 meaning exactly on left border of map... :thinking:
 
-**I WAS FLIPPING X/Y BUT APPLYING PROJECTION BEFORE THAT FIX (USING 0/1 INDICES OF PROJECTION(d))**
+FML **I WAS FLIPPING X/Y BUT APPLYING PROJECTION BEFORE THAT FIX (USING 0/1 INDICES OF PROJECTION(d))**:
 
-FML
+Before:
 
-Before
-
-```
+```js
       bowmore = [55.75602, -6.28381];
       auchentoshen = [55.92237, -4.43934];
       jura = [55.83301, -5.95143];
@@ -154,10 +150,9 @@ Before
       points = [bowmore, auchentoshen, jura, tomatin, highland_park]
 ```
 
+After:
 
-After
-
-```
+```js
       bowmore = [55.75602, -6.28381];
       auchentoshen = [55.92237, -4.43934];
       jura = [55.83301, -5.95143];
@@ -166,7 +161,6 @@ After
       points = [bowmore, auchentoshen, jura, tomatin, highland_park]
       points = points.map((c) => [c[1], c[0]])
 ```
-
 
 ### Scaling whole thing
 
@@ -195,3 +189,44 @@ On zoom, circle isn't scaling in size (1px radius looks like 300px when zoomed w
 Solution: redraw circle by removing it and re-appending it to `<g>` on zoom event listener.
 
 Exact formula for decent dynamic px value is TBD, but by trial and error, `2 / Math.sqrt(scale)` seems to be okay.
+
+## It's Been a While
+
+I haven't worked on this in a few weeks now since creating a working MVP. After going over professional goals with my boss yesterday, this project came up and I decided to get back into it.
+
+After reviewing my notes and current site, I decided to look into a better way of storing the geospatial data.
+
+It's slow to load and seems to take up a lot of memory in the browser, and I think replacing sqlite with postgres+postgis will help with that.
+
+### Postgres
+
+Since I got a new Macbook from Celerity IT a few months ago, I hadn't needed Postgres locally (I use VMs with psql on them instead).
+
+```sh
+brew install postgresql
+brew services start postgresql
+psql postgres
+```
+
+Then inside postgres:
+
+```sql
+CREATE USER dougie WITH PASSWORD 'scotchwhiskeyman';
+CREATE DATABASE distilleries WITH OWNER dougie;
+```
+
+### New Way
+
+Instead of creating SVG from shapefile, there's a shp2postgis (not used yet, side-tracked by trying to center/fullscreen map on all screen sizes)
+
+Also this
+
+```sh
+pip install django-location-field
+```
+
+|                   | SQLite | PostGIS |
+|-------------------|--------|---------|
+| Load Time         | 6.04s  |  x      |
+| Data Transferred  | 1.33M  |  x      |
+| Page Memory       | 38.4M  |  x      |

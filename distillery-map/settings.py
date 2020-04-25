@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'location_field.apps.DefaultConfig',
     'distilleries',
 ]
 
@@ -76,11 +77,14 @@ WSGI_APPLICATION = 'distillery-map.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'distilleries',
+        'USER': 'dougie',
+        'PASSWORD': 'scotchwhiskeyman',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -121,9 +125,18 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'frontend', 'dist'),
 ]
 
 STATIC_ROOT = 'assets'
 
+# django-location-field
+LOCATION_FIELD = {
+    'search.provider': 'nominatim',
+    'map.provider': 'openstreetmap',
+    'provider.openstreetmap.max_zoom': 18
+}
+
 # Custom variables
-DISTILLERY_CSV = 'https://www.datascienceblog.net/data-sets/whiskies.csv'
+# DISTILLERY_CSV = 'https://www.datascienceblog.net/data-sets/whiskies.csv'
+DISTILLERY_CSV = os.path.join(BASE_DIR, 'whiskies.csv')

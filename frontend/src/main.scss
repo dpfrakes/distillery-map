@@ -1,0 +1,11 @@
+.tooltip {
+  position: absolute;
+  bottom: 50px;
+  left: 50px;
+  width: 200px;
+  border: 1px dashed red;
+
+  img {
+    max-width: 100%;
+  }
+}
