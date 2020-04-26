@@ -140,10 +140,10 @@ LOCATION_FIELD = {
 }
 
 # djangorestframework
-REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
-}
+# REST_FRAMEWORK = {
+#     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+#     'PAGE_SIZE': 10
+# }
 
 # Custom variables
 # DISTILLERY_CSV = 'https://www.datascienceblog.net/data-sets/whiskies.csv'

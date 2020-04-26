@@ -1,42 +1,36 @@
 import React, { Component } from "react";
+import * as d3 from 'd3';
+import constants from '../utils/constants';
+import drawDistillery from "../utils/drawDistillery";
 
 class Distillery extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      marker: {}
+      coordinates: []
     };
-
-    this.showTooltip = this.showTooltip.bind(this);
-  }
-
-  showTooltip(distillery) {
-    console.log('populate tooltip this this info:');
-    console.log(distillery);
-  }
-
-  hideTooltip() {
-    console.log('hide tooltip!');
   }
 
   componentDidMount() {
-    // get events API call
+    // Transform coordinates based on projection
+    const { distillery } = this.props;
+    this.setState({coordinates: constants.projection([distillery.latitude, distillery.longitude])})
   }
 
   render() {
+    const distillery = this.props.distillery;
+
     return (
       <circle
         className="distillery"
-        cx={this.state.marker.x}
-        cy={this.state.marker.y}
-        r={this.state.marker.r}
-        fill={this.state.marker.fill}
-        data-name={this.props.name}
-        data-region={this.props.region}
-        data-year-est={this.props.yearEst}
-        onClick={() => { console.log(this) }}
-      >
-      </circle>
+        cx="300"
+        cy="300"
+        r="2px"
+        fill={constants.colors[distillery.region]}
+        data-name={distillery.name}
+        data-region={distillery.region}
+        data-year-est={distillery.year_established}
+      ></circle>
     );
   }
 }

@@ -8,7 +8,6 @@ function App() {
     <>
       <BaseMap />
       <Search />
-      <Tooltip />
     </>
   );
 }

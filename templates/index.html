@@ -4,21 +4,12 @@
 <html>
 
 <head>
-  <meta charset="utf-8">
   <title>Scottish Distilleries</title>
 </head>
 
 <body>
-
   <div id="root"></div>
-
-  <script>
-  var distilleries = {{ distilleries|safe }};
-  var mapFile = "{% static 'json/topo-scotland.json' %}";
-  </script>
-
   <script src="{% static "main.js" %}"></script>
-
 </body>
 
 </html>

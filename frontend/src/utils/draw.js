@@ -27,7 +27,7 @@ export default () => {
 
   g = svg.append("g");
 
-  d3.json(mapFile).then((shp, err) => {
+  d3.json("/static/json/topo-scotland.json").then((shp, err) => {
 
     // Extracting polygons and contours
     var scotland = topojson.feature(shp, shp.objects.eer);

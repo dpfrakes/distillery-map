@@ -247,3 +247,5 @@ Once we're in d3 land, there's no going back to React (components, states, etc.)
 
 Example: hovering on d3 circle can't call `tooltip.setState({'active': true, 'distillery': {...}})`.
 
+WHAT A PAIN.
+
