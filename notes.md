@@ -225,8 +225,25 @@ Also this
 pip install django-location-field
 ```
 
-|                   | SQLite | PostGIS |
-|-------------------|--------|---------|
-| Load Time         | 6.04s  |  x      |
-| Data Transferred  | 1.33M  |  x      |
-| Page Memory       | 38.4M  |  x      |
+|                   | SQLite+Django | PostGIS+React |
+|-------------------|---------------|---------------|
+| Load Time         |     6.04s     |     0.96s     |
+| Data Transferred  |     1.33M     |     3.28M     |
+| Page Memory       |     38.4M     |     34.6M     |
+
+### Reactify
+
+Figured it was worth rethinking this
+
+Adding React + django is easy, though still kind of overkill in my mind.  Django renders an empty template with no context data, then requires multiple server calls to get map data, distillery data, etc.
+
+Virtual DOM does appear faster though, and thinking Reactively works fairly well for my object-oriented mind.
+
+#### Adding d3
+
+Adding d3 to the mix is tough though: d3 is about easy access to create/update the DOM, whereas React uses a virtual DOM (explicitly leaving out direct interactions to DOM).
+
+Once we're in d3 land, there's no going back to React (components, states, etc.). So that means all JS event listeners in d3 have to call the post-rendered React components without the benefit of `setState`.
+
+Example: hovering on d3 circle can't call `tooltip.setState({'active': true, 'distillery': {...}})`.
+

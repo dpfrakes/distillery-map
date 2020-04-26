@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+import React from 'react';
 import * as topojson from "topojson-client";
 import constants from './constants';
 
@@ -77,5 +78,18 @@ export default () => {
       .attr("data-name", (d) => d.name)
       .attr("data-region", (d) => d.region)
       .attr("data-year-est", (d) => d.year_established)
-  }  
+      // .on("mouseover", function(d) {		
+      //   div.transition()		
+      //       .duration(200)		
+      //       .style("opacity", .9);		
+      //   div	.html(formatTime(d.date) + "<br/>"  + d.close)	
+      //       .style("left", (d3.event.pageX) + "px")		
+      //       .style("top", (d3.event.pageY - 28) + "px");	
+      //   })					
+      // .on("mouseout", function(d) {		
+      //     div.transition()		
+      //         .duration(500)		
+      //         .style("opacity", 0);	
+      // });
+    }  
 }

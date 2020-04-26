@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'location_field.apps.DefaultConfig',
+    'api',
     'distilleries',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -135,6 +137,12 @@ LOCATION_FIELD = {
     'search.provider': 'nominatim',
     'map.provider': 'openstreetmap',
     'provider.openstreetmap.max_zoom': 18
+}
+
+# djangorestframework
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
 }
 
 # Custom variables
