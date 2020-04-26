@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Distillery from "./Distillery";
 import Tooltip from "./Tooltip";
 import drawScotland from "../utils/drawCountry";
+import * as d3 from "d3";
 
 class BaseMap extends Component {
   constructor(props) {
@@ -15,14 +16,30 @@ class BaseMap extends Component {
   }
 
   componentDidMount() {
+
     // render map of country only
     drawScotland();
+
     // fetch distillery data from API
     fetch('/api/distilleries/')
       .then((data) => data.json())
       .then((distilleries) => {
         this.setState({distilleries, loaded: true});
       });
+
+    // Let React handle click/drag/zoom
+    let svg = d3.select("svg");
+    let g = d3.select("svg g");
+    // const forceUpdate = this.forceUpdate;
+
+    // svg.call(d3.zoom().on('zoom', () => {
+    //   g.attr("transform", d3.event.transform);
+    //   // d3.event.preventDefault();
+    //   // redraw by forcing update
+    //   // this.setState({distilleries: state.distilleries});
+    //   forceUpdate();
+    // }));
+
   }
 
   onHover(e) {
