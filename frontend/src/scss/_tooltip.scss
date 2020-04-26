@@ -1,0 +1,17 @@
+.tooltip {
+  position: absolute;
+  bottom: 50px;
+  left: 50px;
+  width: 300px;
+  height: 250px;
+  z-index: 10;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  padding: 20px;
+
+  .distillery-info {
+    position: absolute;
+    bottom: 0;
+  }
+}

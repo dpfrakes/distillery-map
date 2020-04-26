@@ -1,11 +1,13 @@
 import React, { Component } from "react";
-import { render } from "react-dom";
 
 class Tooltip extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      distillery: {},
+      distillery: {
+        name: "",
+        image: "https://via.placeholder.com/350x150"
+      },
       loaded: true,
       placeholder: "Loading..."
     };
@@ -19,10 +21,9 @@ class Tooltip extends Component {
     const distillery = this.state.distillery;
 
     return this.state.loaded ? (
-      <div className="tooltip">
-        <img src="https://via.placeholder.com/350x150" />
+      <div className="tooltip" style={{backgroundImage: `url(${this.state.distillery.image}`}}>
         <div className="distillery-info">
-          <p>{distillery.name}</p>
+          <h4>{distillery.name || "Distillery"}</h4>
           <p>Lorem ipsum dolor</p>
         </div>
       </div>
@@ -33,8 +34,3 @@ class Tooltip extends Component {
 }
 
 export default Tooltip;
-
-const container = document.getElementById("cart");
-if (container) {
-  render(<Cart />, container);
-}

@@ -1,27 +1,3 @@
-body {
-  background: #222;
-  margin: 0;
-}
-
-.debug {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  width: 200px;
-  background: #fff;
-}
-
-#search {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  z-index: 1;
-}
-
-#search #searchbar {
-  padding: 5px;
-}
-
 #map-container {
   position: relative;
   width: 100%;
