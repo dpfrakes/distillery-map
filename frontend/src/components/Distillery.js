@@ -14,7 +14,8 @@ class Distillery extends Component {
   componentDidMount() {
     // Transform coordinates based on projection
     const { distillery } = this.props;
-    this.setState({coordinates: constants.projection([distillery.latitude, distillery.longitude])})
+    const projected = constants.projection([distillery.longitude, distillery.latitude]);
+    this.setState({coordinates: projected});
   }
 
   render() {
@@ -23,13 +24,14 @@ class Distillery extends Component {
     return (
       <circle
         className="distillery"
-        cx="300"
-        cy="300"
+        cx={this.state.coordinates[0]}
+        cy={this.state.coordinates[1]}
         r="2px"
         fill={constants.colors[distillery.region]}
         data-name={distillery.name}
         data-region={distillery.region}
         data-year-est={distillery.year_established}
+        data-original-coordinates={this.props.origCoord}
       ></circle>
     );
   }

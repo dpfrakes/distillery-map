@@ -3,8 +3,6 @@ import Distillery from "./Distillery";
 import Tooltip from "./Tooltip";
 import drawScotland from "../utils/drawCountry";
 
-import * as d3 from 'd3';
-
 class BaseMap extends Component {
   constructor(props) {
     super(props);
@@ -19,7 +17,7 @@ class BaseMap extends Component {
   componentDidMount() {
     // render map of country only
     drawScotland();
-
+    // fetch distillery data from API
     fetch('/api/distilleries/')
       .then((data) => data.json())
       .then((distilleries) => {
@@ -46,7 +44,7 @@ class BaseMap extends Component {
       <>
         <svg onMouseOver={this.onHover}>
           {this.state.distilleries.map((d, i) =>
-            <Distillery key={i} distillery={d} />
+            <Distillery key={i} distillery={d} origCoord={d.coordinates} />
           )}
         </svg>
         <Tooltip distillery={this.state.activeDistillery} />
