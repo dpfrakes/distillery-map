@@ -1,7 +1,6 @@
 from distilleries.models import Distillery
 from api.serializers import DistillerySerializer
-from rest_framework import permissions
-from rest_framework import viewsets
+from rest_framework import filters, permissions, viewsets
 
 
 class DistilleryViewSet(viewsets.ModelViewSet):
@@ -11,3 +10,5 @@ class DistilleryViewSet(viewsets.ModelViewSet):
     queryset = Distillery.objects.all()
     serializer_class = DistillerySerializer
     permission_classes = [permissions.IsAuthenticated]
+    search_fields = ['name']
+    filter_backends = (filters.SearchFilter,)
