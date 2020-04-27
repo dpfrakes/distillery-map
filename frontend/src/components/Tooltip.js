@@ -2,11 +2,15 @@ import React, { Component } from "react";
 
 class Tooltip extends Component {
   render() {
+    const defaultBackground = "https://www.undiscoveredscotland.co.uk/usfeatures/maltwhisky/images-washstill/still18-benromach.jpg";
+
     return this.props.distillery ? (
-      <div className="tooltip" style={{backgroundImage: `url(${this.props.distillery.image || "https://via.placeholder.com/350x150"})`}}>
+      <div className="tooltip" style={{backgroundImage: `url(${this.props.distillery.image_url || defaultBackground})`}}>
         <div className="distillery-info">
-          <h4>{this.props.distillery.name}</h4>
-          <p>Lorem ipsum dolor</p>
+          <h2>{this.props.distillery.name}</h2>
+          <p>{this.props.distillery.region}</p>
+          <p>{this.props.distillery.coordinates}</p>
+          <p>{this.props.distillery.year_established}</p>
         </div>
       </div>
     ) : (

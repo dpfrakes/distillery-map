@@ -249,3 +249,24 @@ Example: hovering on d3 circle can't call `tooltip.setState({'active': true, 'di
 
 WHAT A PAIN.
 
+## Getting d3 and React to play along
+
+d3: access/update DOM
+react: build virtual DOM to avoid explicitly touching touching actual DOM)
+
+Workaround:
+
+Render distilleries via `<Distillery />` React component (`fetch` then `setState` in `BaseMap`).
+Then in `BaseMap`'s `didComponentMount` method, include d3 listener for click/drag/zoom:
+
+```js
+svg.call(d3.zoom().on('zoom', () => {
+  // scale/transform
+  // remove old distillery markers (rendered `<Distillery />`s)
+  // add new markers via d3
+  ...
+}));
+```
+
+Not ideal, but the React components are loaded onto the page and don't disappear even when the rendered circles are removed by d3.
+Tooltip still works as expected, and we pass off future rendering logic to d3.

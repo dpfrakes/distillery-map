@@ -7,4 +7,5 @@ class DistillerySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Distillery
         fields = ['name', 'region', 'owner', 'year_established',
-          'year_closed', 'year_demolished', 'latitude', 'longitude', 'geolocation']
+          'year_closed', 'year_demolished', 'latitude', 'longitude', 
+          'geolocation', 'image_url', 'logo_url']

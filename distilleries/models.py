@@ -32,6 +32,12 @@ class Distillery(models.Model):
         decimal_places=5,
         blank=True, null=True)
     geolocation = LocationField(based_fields=['name'])
+    image_url = models.CharField(
+        max_length=200,
+        blank=True, null=True)
+    logo_url = models.CharField(
+        max_length=200,
+        blank=True, null=True)
 
     class Meta:
         verbose_name_plural = 'Distilleries'
