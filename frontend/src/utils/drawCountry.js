@@ -30,6 +30,4 @@ export default () => {
   path = d3.geoPath()
     .projection(constants.projection);
 
-  g.attr("id", "map");
-
 }

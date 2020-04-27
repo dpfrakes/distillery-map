@@ -9,11 +9,13 @@ class BaseMap extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      darkMode: true,
       loaded: true,
       distilleries: [],
       activeDistillery: {}
     };
     this._onHover = this._onHover.bind(this);
+    this._toggleDarkMode = this._toggleDarkMode.bind(this);
   }
 
   componentDidMount() {
@@ -64,6 +66,10 @@ class BaseMap extends Component {
 
   }
 
+  _toggleDarkMode(e) {
+    this.setState({darkMode: !this.state.darkMode});
+  }
+
   _onHover(e) {
     // Hover listener on parent element since:
     // 1. Tooltip is controlled by BaseMap
@@ -80,14 +86,15 @@ class BaseMap extends Component {
 
   render() {
     return this.state.loaded && (
-      <>
+      <div id="map" className={this.state.darkMode ? "dark" : ""}>
+        <button id="toggle-ui-mode" onClick={this._toggleDarkMode}>{this.state.darkMode ? "light" : "dark"}</button>
         <svg onMouseOver={this._onHover}>
           {this.state.distilleries.map((d, i) =>
             <Distillery key={i} distillery={d} origCoord={d.coordinates} />
           )}
         </svg>
         <Tooltip distillery={this.state.activeDistillery} />
-      </>
+      </div>
     );
   }
 }
