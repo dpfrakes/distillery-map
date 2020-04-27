@@ -5,11 +5,12 @@ class Search extends Component {
     super(props);
     this.state = {
       q: '',
-      autocomplete: ['glenfarclas', 'glenfiddich', 'glen livet'],
+      autocomplete: [],
       options: []
     };
     this._handleSubmit = this._handleSubmit.bind(this);
     this._handleType = this._handleType.bind(this);
+    this._focusDistillery = this._focusDistillery.bind(this);
   }
 
   componentDidMount() {
@@ -19,10 +20,16 @@ class Search extends Component {
   _handleType(e) {
     let q = e.target.value;
     this.setState({q});
-    console.log('get autocomplete results');
-    fetch(`/api/distilleries/?search=${q}`)
-      .then((data) => data.json())
-      .then((json) => console.log(json));
+    if (q) {
+      // TODO replace with react search
+      fetch(`/api/distilleries/?search=${q}`)
+        .then((data) => data.json())
+        .then((json) => {
+          this.setState({autocomplete: json.map((d) => d.name)});
+        });
+    } else {
+      this.setState({autocomplete: []});
+    }
   }
 
   _handleSubmit(e) {
@@ -32,18 +39,25 @@ class Search extends Component {
       .then((json) => console.log(json));
   }
 
+  _focusDistillery(e) {
+    this.setState({
+      q: e.target.innerText,
+      autocomplete: []
+    });
+  }
+
   render() {
     return (
       <div id="search">
 
         <form onSubmit={this._handleSubmit}>
-          <input type="text" name="q" id="searchbar" defaultValue={this.state.q} onChange={this._handleType} />
+          <input type="text" name="q" id="searchbar" autoComplete="off" value={this.state.q} onChange={this._handleType} />
         </form>
 
         <ul id="autocomplete-results">
-          {this.state.autocomplete.map((result) => {
-            <li>{result}</li>
-          })}
+          {this.state.autocomplete.map((result, i) =>
+            <li key={i} onClick={this._focusDistillery}>{result}</li>
+          )}
         </ul>
 
         <ul id="options">
