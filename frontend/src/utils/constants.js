@@ -7,7 +7,7 @@ export default {
     .center([-4, 57])
     // Scale based on trial and error to fill screen with Scottish mainland
     .scale(4500)
-    // Center
+    // Center in viewport
     .translate([window.innerWidth / 2, window.innerHeight / 2]),
 
   colors: {

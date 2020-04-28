@@ -18,7 +18,6 @@ from django.urls import include, path
 from django.views.generic.base import TemplateView
 from rest_framework import routers
 
-from distilleries.views import HomeView
 from api import views as api_views
 
 
@@ -26,7 +25,7 @@ router = routers.DefaultRouter()
 router.register(r'distilleries', api_views.DistilleryViewSet)
 
 urlpatterns = [
-    path('', HomeView.as_view(), name='home'),
+    path('', TemplateView.as_view(template_name='index.html'), name='index'),
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('admin/', admin.site.urls),

@@ -23,15 +23,8 @@ class Distillery(models.Model):
         blank=True, null=True)
     year_demolished = models.IntegerField(
         blank=True, null=True)
-    latitude = models.DecimalField(
-        max_digits=8,
-        decimal_places=5,
+    geolocation = LocationField(based_fields=['name'],
         blank=True, null=True)
-    longitude = models.DecimalField(
-        max_digits=8,
-        decimal_places=5,
-        blank=True, null=True)
-    geolocation = LocationField(based_fields=['name'])
     image_url = models.CharField(
         max_length=200,
         blank=True, null=True)
@@ -45,11 +38,18 @@ class Distillery(models.Model):
     def __str__(self):
        return self.name
 
+    @property
+    def latitude(self):
+        return self.geolocation.x
+
+    @property
+    def longitude(self):
+        return self.geolocation.y
+
+    @property
     def coordinates(self):
         if self.geolocation:
             return format_coordinates(self.geolocation.x, self.geolocation.y)
-        elif self.latitude and self.longitude:
-            return format_coordinates(self.latitude, self.longitude)
         return '--'
 
 # TODO make this a ManyToOne for Distillery (or individual whiskies?)

@@ -1,4 +1,4 @@
-from distilleries.models import Distillery
+from app.models import Distillery
 from api.serializers import DistillerySerializer
 from rest_framework import filters, permissions, viewsets
 

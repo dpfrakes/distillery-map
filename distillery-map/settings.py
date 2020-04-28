@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'location_field.apps.DefaultConfig',
     'api',
-    'distilleries',
+    'app',
     'rest_framework',
 ]
 
@@ -79,13 +79,17 @@ WSGI_APPLICATION = 'distillery-map.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'distilleries',
-        'USER': 'dougie',
-        'PASSWORD': 'scotchwhiskeyman',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'ENGINE': 'django.contrib.gis.db.backends.spatialite',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
+    # 'default': {
+    #     'ENGINE': 'django.contrib.gis.db.backends.postgis',
+    #     'NAME': 'distilleries',
+    #     'USER': 'dougie',
+    #     'PASSWORD': 'scotchwhiskeyman',
+    #     'HOST': '127.0.0.1',
+    #     'PORT': '5432',
+    # }
 }
 
 # Password validation

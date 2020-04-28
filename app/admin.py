@@ -1,7 +1,6 @@
 from django.contrib import admin
 
-
-from distilleries.models import Distillery
+from app.models import Distillery
 
 class DistilleryAdmin(admin.ModelAdmin):
     list_display = ('name', 'location', 'region', 'coordinates',)

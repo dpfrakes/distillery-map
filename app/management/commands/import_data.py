@@ -2,10 +2,11 @@ import pandas as pd
 from geopy.geocoders import Nominatim
 
 from django.conf import settings
+from django.contrib.gis.geos import Point
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 
-from distilleries.models import Distillery
+from app.models import Distillery
 
 
 class Command(BaseCommand):
@@ -216,13 +217,14 @@ class Command(BaseCommand):
         # Import CSV from Data Science Blog
         df = pd.read_csv(settings.DISTILLERY_CSV)
         for index, row in df.iterrows():
-            coordinates = {'longitude': row['lat'], 'latitude': row['long']}
-            d, created = Distillery.objects.update_or_create(name=row['Distillery'], defaults=coordinates)
-        
+            # coordinates = {'longitude': row['lat'], 'latitude': row['long']}
+            point = Point(row['lat'], row['long'],)
+            d, created = Distillery.objects.update_or_create(name=row['Distillery'], defaults={'geolocation': point})
+
         # After importing data, try updating lat/long for other distilleries using geocoder
-        geolocator = Nominatim(user_agent="")
-        for distillery in Distillery.objects.filter(geolocation__isnull=True):
-            location = geolocator.geocode(distillery.name)
-            print(location)
+        # geolocator = Nominatim(user_agent="")
+        # for distillery in Distillery.objects.filter(geolocation__isnull=True):
+        #     location = geolocator.geocode(distillery.name)
+        #     print(location)
 
         print(f'{Distillery.objects.count()} distilleries imported')
