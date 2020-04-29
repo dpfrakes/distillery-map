@@ -1,0 +1,23 @@
+.tooltip {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 400px;
+  z-index: 2;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  mask-image: linear-gradient(to right, black 0%, black 60%, rgba(0,0,0,0) 100%);
+  pointer-events: none;
+
+  .distillery-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    color: white;
+    background: linear-gradient(to top, #000 0%, rgba(0,0,0,0.7) 80%, rgba(0,0,0,0));
+  }
+}
