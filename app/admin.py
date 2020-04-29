@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+from app.filters import ABCInfoFilter
 from app.models import Distillery, Scotch, ABCInfo
 
 class DistilleryAdmin(admin.ModelAdmin):
@@ -9,14 +10,14 @@ class DistilleryAdmin(admin.ModelAdmin):
 
 class ScotchAdmin(admin.ModelAdmin):
     list_display = ('name', 'price', 'distillery',)
-    readonly_fields = ('price', )
+    readonly_fields = ('price', 'description', )
     list_filter = ('distillery',)
     ordering = ('name',)
 
 class ABCInfoAdmin(admin.ModelAdmin):
-    list_display = ('sku', 'name', 'size', 'price',)
-    list_filter = ('size', 'price',)
-    ordering = ('name', 'size',)
+    list_display = ('name', 'size', 'price', 'sku',)
+    list_filter = ('size', ABCInfoFilter,)
+    ordering = ('name',)
 
 admin.site.register(Distillery, DistilleryAdmin)
 admin.site.register(Scotch, ScotchAdmin)
