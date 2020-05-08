@@ -5,7 +5,7 @@ class Tooltip extends Component {
     const defaultBackground = "https://www.undiscoveredscotland.co.uk/usfeatures/maltwhisky/images-washstill/still18-benromach.jpg";
 
     return this.props.distillery ? (
-      <div className="tooltip" style={{backgroundImage: `url(${this.props.distillery.image_url || defaultBackground})`}}>
+      <div className="tooltip" style={{backgroundImage: `url(${this.props.distillery.image || defaultBackground})`}}>
         <div className="distillery-info">
           <h2>{this.props.distillery.name}</h2>
           <p>{this.props.distillery.region}</p>

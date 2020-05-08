@@ -38,9 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'location_field.apps.DefaultConfig',
+    'django_filters',
+    'rest_framework',
     'api',
     'app',
-    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -144,11 +145,18 @@ LOCATION_FIELD = {
 }
 
 # djangorestframework
-# REST_FRAMEWORK = {
-#     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-#     'PAGE_SIZE': 10
-# }
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 1000,
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication'
+    ]
+}
+
+
 
 # Custom variables
 # DISTILLERY_CSV = 'https://www.datascienceblog.net/data-sets/whiskies.csv'
 DISTILLERY_CSV = os.path.join(BASE_DIR, 'whiskies.csv')
+PLACEHOLDER_IMAGE = 'https://www.undiscoveredscotland.co.uk/usfeatures/maltwhisky/images-washstill/still18-benromach.jpg'

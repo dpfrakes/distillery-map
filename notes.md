@@ -494,3 +494,81 @@ for lookup in ['productz32xlabelz32xname', 'fpagez32xheading61692', 'fpagez32xti
         attrs.update({'name': raw[lookup]})
         break
 ```
+
+### Refining Search
+
+A bunch of scotches are being imported (w00t) with the wrong distillery associated with them (d'oh).
+
+This means querying that distillery is returning other scotches that belong to other distilleries (bad ABC search, bad).
+
+Hopefully their data hierarchy integrity is more reliable than their search algorithm. Time to query with `aq`.
+
+First, another manual search to see the difference in results (other than name). Query of "bowmore" on their site returns the following:
+
+- Bowmore-12-Year-Single-Malt-Scotch
+- Bowmore-25-Year-Single-Malt-Scotch
+- Bruichladdich-Port-Charlotte-10-Year-Scotch
+- Bunnahabhain-12-Year-Single-Malt-Scotch
+
+This is great: a small sample size with positive and negative cases.
+
+Searching through this JSON result for a field with just "Bowmore" or "bowmore" in it turned up empty, so no data field we can query directly by distillery... that's disappointing.
+
+I might have to rely on the `name`/`title` field anyway.
+
+Retry import script, only saving Scotch item if `name` starts with the same word as the first word in `q`.
+
+Before
+ABCInfo objects: 357
+Scotch objects: 379 (50%+ wrong distillery)
+
+After
+ABCInfo objects: 709
+Scotch objects: 488
+
+Okay so this is way better and more accurate, but there are now duplicate scotches and ABCInfo objects because I used `title` (replacing "-" with " ") instead of looking through all those candidate fields for a name match. Perhaps I still need those candidate fields since apparently the API is returning an SKU-appended version of the product as well (e.g. "Templeton-Rye-Whiskey" and "Templeton-Rye-Whiskey 027102").
+
+Since these all appear to match SKUs (duplicates are always "PRODUCT" with SKU and "PRODUCT SKU"), I should be able to just omit the results that don't have an SKU. That would be fantastic for a densely populated database!
+
+After adding SKU logic
+ABCInfo objects: 161
+Scotch objects: 157
+
+So much better! And expectedly, there are only a few more ABCInfo objects than Scotches since they should be 1:1 except for additional size options. Still, 3 obvious issues remain:
+
+1. There ought to be more than just 11 instances of non-750ml sizes
+2. A few ABCInfo objects have duplicate SKUs still (name varies slightly, e.g. "Ardbeg 22 YO" and "Ardbeg 22 Year Scotch")
+3. Some of the scotches have weird names (not capitalized, "YO" instead of "Year Old")
+
+Regarding #2, organizing results by SKU to see duplicates, I discovered there are only the following duplicates:
+
+- 004232: Ardbeg 22 YO / Ardbeg 22 Year Scotch
+- 005002: Glenfiddich Gran Reserva 21 Year / Glenfiddich Single Malt Scotch Whisky 21 Year Old
+- 100854: Ardbeg Traigh Bhan 19 Year / Ardbeg Traigh Bhan 19 Yr / Ardbeg traigh Bhan 19 Yr
+
+This should also fix #3.
+
+Before tackling #1, let's clean up the data we already have. Let's make SKU unique since the only duplicates are the ones above (and they're wrong).
+
+Also, I'm already saving all these API results to local JSON files... so why am I not using those? :slam:
+
+After making sku unique:
+ABCInfo objects: 157
+Scotch objects: 157
+
+Two more issues to address:
+
+1. Scotches being created for every ABCInfo
+2. No descriptions
+
+Moved ABCInfo object creation out from under the SKU and NAME check (still a requirement for get/create Scotch, but no longer for create/update ABCInfo).
+
+For description, I'm probably pulling from the wrong field/key (becausee it does exist in the json response).... Alas, it's not even a field in the `update_abc_prices` script. Derp.
+
+## Done
+
+E
+
+from app.models import *
+ABCInfo.objects.all().delete()
+Scotch.objects.all().delete()

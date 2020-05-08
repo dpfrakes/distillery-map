@@ -1,8 +1,7 @@
 from django.contrib import admin
-from app.models import ABCInfo
 
 
-class ABCInfoFilter(admin.SimpleListFilter):
+class PriceRangeFilter(admin.SimpleListFilter):
     title = 'price range'
     parameter_name = 'price_range'
 

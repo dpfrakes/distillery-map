@@ -1,5 +1,6 @@
-from django.db import models
+from django.conf import settings
 from django.contrib.gis.geos import Point
+from django.db import models
 from location_field.models.spatial import LocationField
 
 from .util import format_coordinates
@@ -45,10 +46,22 @@ class Distillery(models.Model):
         if self.geolocation:
             return format_coordinates(self.geolocation.x, self.geolocation.y)
         return '--'
+    
+    @property
+    def image(self):
+        if self.image_url:
+            return self.image_url
+        for scotch in Scotch.objects.filter(distillery=self):
+            if scotch.image_url:
+                return scotch.image_url
+        return settings.PLACEHOLDER_IMAGE
+
+    def __str__(self):
+        return self.name
 
 class Scotch(models.Model):
     name = models.CharField(
-        max_length=100, blank=True, null=True)
+        max_length=100, unique=True, blank=True, null=True)
     # Just link Scotch to 750ml product from ABC if one exists
     distillery = models.ForeignKey('Distillery',
         on_delete=models.SET_NULL, blank=True, null=True)
@@ -70,13 +83,24 @@ class Scotch(models.Model):
         return None
     description.short_description = 'Description'
 
+    @property
+    def image_url(self):
+        abc_data = ABCInfo.objects.filter(scotch=self)
+        for info in abc_data:
+            if info.image_url:
+                return info.image_url
+        return None
+
+    def __str__(self):
+        return self.name
+
 class ABCInfo(models.Model):
     """
     Information specific to ABC stores, separated from Scotches
     for price info, hierarchy, etc. all specific to Virginia ABC
     """
     sku = models.CharField(
-        max_length=200)
+        max_length=200, unique=True)
     unique_id = models.CharField(
         max_length=30, help_text='Unique to product but not size/price')
     name = models.CharField(
@@ -107,11 +131,17 @@ class ABCInfo(models.Model):
         max_length=50, blank=True, null=True) # 0
     hierarchy_vap = models.CharField(
         max_length=50, blank=True, null=True) # 0
+    image_url = models.URLField(
+        blank=True, null=True)
     scotch = models.ForeignKey('Scotch',
         on_delete=models.SET_NULL, blank=True, null=True)
 
     class Meta:
-        unique_together = ('name', 'size',)
+        verbose_name_plural = 'ABC Info'
+        # unique_together = ('name', 'size',)
+
+    def __str__(self):
+        return f'{self.name} ({self.size})'
 
 # TODO make this a ManyToOne for Distillery (or individual whiskies?)
 # class TasteProfile(models.Model):
