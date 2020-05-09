@@ -41,8 +41,8 @@ INSTALLED_APPS = [
     'django_filters',
     'django_countries',
     'rest_framework',
-    'api',
-    'entities',
+    'apps.api',
+    'apps.entities',
 ]
 
 MIDDLEWARE = [

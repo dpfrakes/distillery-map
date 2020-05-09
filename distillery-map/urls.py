@@ -19,7 +19,7 @@ from django.views.generic.base import TemplateView
 from rest_framework import routers
 
 from api import views as api_views
-from entities.views import distillery_detail
+from apps.entities.views import distillery_detail
 
 router = routers.DefaultRouter()
 router.register(r'distilleries', api_views.DistilleryViewSet)
