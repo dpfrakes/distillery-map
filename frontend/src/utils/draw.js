@@ -13,19 +13,35 @@ export default () => {
 
   g = svg.append("g");
 
-  d3.json("/static/json/topo-scotland.json").then((shp, err) => {
+  // Draw world
+  d3.json("/static/json/topo-uk.json").then((shp, err) => {
 
     // Extracting polygons and contours
-    var scotland = topojson.feature(shp, shp.objects.eer);
+    var world = topojson.feature(shp, shp.objects['uk.geo']);
   
     // Draw Scotland map
     g.selectAll(".country")
-      .data(scotland.features)
+      .data(world.features)
       .enter()
       .append("path")
       .attr("class", "country")
       .attr("d", path);
   });
+
+  // Draw Scotland
+  // d3.json("/static/json/topo-scotland.json").then((shp, err) => {
+
+  //   // Extracting polygons and contours
+  //   var scotland = topojson.feature(shp, shp.objects.eer);
+  
+  //   // Draw Scotland map
+  //   g.selectAll(".country")
+  //     .data(scotland.features)
+  //     .enter()
+  //     .append("path")
+  //     .attr("class", "country")
+  //     .attr("d", path);
+  // });
 
   path = d3.geoPath()
     .projection(constants.projection);

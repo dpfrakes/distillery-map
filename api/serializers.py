@@ -6,6 +6,7 @@ from rest_framework import serializers
 class DistillerySerializer(serializers.HyperlinkedModelSerializer):
     latitude = serializers.ReadOnlyField()
     longitude = serializers.ReadOnlyField()
+    owner = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Distillery

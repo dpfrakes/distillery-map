@@ -582,3 +582,14 @@ Most "manual" part of the project so far.
 ### Naming Things
 
 Coming up with a cool "data sheet" for end users on each distillery: should include list of whiskies made by the distillery. Ended up doing lots of reading/research just from little questions like "what to name the field for 'single malt' or 'blended' whisky."
+
+### World Map
+
+For companies located in other countries
+
+
+I want to do a visualization using lines connecting company HQs to owned properties across the globe. Cool viz/animation opportunities here.
+
+World map (high-res) is a lot of data, so using low-res at least for development.
+
+Might end up doing a hybrid approach: https://geojson-maps.ash.ms/ allows individual countries (low-res), so I could do Scotland/UK high-res and all other low? Lower priority for now...

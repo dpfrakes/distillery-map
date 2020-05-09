@@ -8,6 +8,13 @@ This project contains a database along with an interactive map to explore the hi
 source ~/.virtualenv/scotland/bin/activate
 pip install -r requirements.txt
 ./manage.py runserver
+
+# Fresh database
+rm sqlite3.db
+./manage.py migrate
+
+# Import all data
+./manage.py loaddata fixtures/*
 ```
 
 ### Notes

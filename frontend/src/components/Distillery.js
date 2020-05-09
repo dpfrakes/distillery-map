@@ -24,7 +24,7 @@ class Distillery extends Component {
         className="distillery"
         cx={this.state.coordinates[0]}
         cy={this.state.coordinates[1]}
-        r="2px"
+        r="10px"
         fill={constants.colors[distillery.region]}
         data-name={distillery.name}
         data-region={distillery.region}

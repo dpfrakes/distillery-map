@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.db import models
+from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.text import slugify
 
@@ -26,11 +27,11 @@ class Company(models.Model):
     def __str__(self):
        return self.name
 
-    # TODO replace filter with ForeignKey, not name matching
     def owned_properties(self):
         try:
-            distilleries = Distillery.objects.filter(owner=self.name).order_by('name')
-            return '\n'.join([f'- {d.name}' for d in distilleries])
+            distilleries = Distillery.objects.filter(owner=self).order_by('name')
+            distillery_list = [f'<a href="{reverse("admin:app_distillery_change", args=[d.pk])}">{d.name}</a>' for d in distilleries]
+            return format_html('<br/>'.join(distillery_list))
         except Exception as e:
             print(e)
             return None
@@ -49,7 +50,7 @@ class Distillery(models.Model):
         max_length=40, blank=True, null=True)
     region = models.CharField(
         max_length=40, blank=True, null=True)
-    owner = models.CharField(
+    owner_name = models.CharField(
         max_length=60, blank=True, null=True)
     year_established = models.IntegerField(
         blank=True, null=True)
@@ -63,9 +64,8 @@ class Distillery(models.Model):
         max_length=200, blank=True, null=True)
     logo_url = models.CharField(
         max_length=200, blank=True, null=True)
-    company = models.ForeignKey('Company',
+    owner = models.ForeignKey('Company',
         on_delete=models.SET_NULL, blank=True, null=True)
-
     class Meta:
         verbose_name_plural = 'Distilleries'
 
@@ -98,6 +98,10 @@ class Distillery(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
+        # Get or create 
+        if not self.owner and self.owner_name:
+            company, _ = Company.objects.get_or_create(name=self.owner_name)
+            self.owner = company
         return super().save(*args, **kwargs)
 
 class Scotch(models.Model):

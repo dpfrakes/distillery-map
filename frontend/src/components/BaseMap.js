@@ -49,7 +49,7 @@ class BaseMap extends Component {
         .attr("class", "distillery")
         .attr("cx", (d) => constants.projection([d.latitude, d.longitude])[0])
         .attr("cy", (d) => constants.projection([d.latitude, d.longitude])[1])
-        .attr("r", (d) => 2 / Math.sqrt(d3.event.transform.k) + "px")
+        .attr("r", (d) => 10 / Math.sqrt(d3.event.transform.k) + "px")
         .attr("fill", (d) => constants.colors[d.region])
         .attr("data-name", (d) => d.name)
         .attr("data-region", (d) => d.region)
