@@ -17,7 +17,8 @@ export default () => {
   d3.json("/static/json/topo-uk.json").then((shp, err) => {
 
     // Extracting polygons and contours
-    var world = topojson.feature(shp, shp.objects['uk.geo']);
+    var k = Object.keys(shp.objects)[0];
+    var world = topojson.feature(shp, shp.objects[k]);
   
     // Draw Scotland map
     g.selectAll(".country")
