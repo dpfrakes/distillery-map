@@ -8,6 +8,7 @@ from django.utils.text import slugify
 from django_countries.fields import CountryField
 from location_field.models.spatial import LocationField
 
+from apps.pricing.models import VirginiaPriceInfo
 from .util import format_coordinates
 
 
@@ -30,11 +31,10 @@ class Company(models.Model):
     def owned_properties(self):
         try:
             distilleries = Distillery.objects.filter(owner=self).order_by('name')
-            distillery_list = [f'<a href="{reverse("admin:app_distillery_change", args=[d.pk])}">{d.name}</a>' for d in distilleries]
+            distillery_list = [f'<a href="{reverse("admin:entities_distillery_change", args=[d.pk])}">{d.name}</a>' for d in distilleries]
             return format_html('<br/>'.join(distillery_list))
         except Exception as e:
-            print(e)
-            return None
+            return ''
     owned_properties.short_description = 'Distilleries'
 
     @property
@@ -146,54 +146,7 @@ class Scotch(models.Model):
             return va_price_info.hierarchy_detail
         return ''
 
-class VirginiaPriceInfo(models.Model):
-    """
-    Information specific to Virginia ABC stores, separated from Scotches
-    for price info, hierarchy, etc. all specific to Virginia ABC
-    """
-    sku = models.CharField(
-        max_length=200, unique=True)
-    unique_id = models.CharField(
-        max_length=30, help_text='Unique to product but not size/price')
-    name = models.CharField(
-        max_length=100)
-    description = models.CharField(
-        max_length=200, blank=True, null=True)
-    size = models.CharField(
-        max_length=20)
-    price = models.DecimalField(
-        max_digits=9, decimal_places=2, blank=True, null=True)
-    product_uri = models.URLField(
-        blank=True, null=True)
-    hierarchy_division = models.CharField(
-        max_length=50, blank=True, null=True) # Alcohol
-    hierarchy_class = models.CharField(
-        max_length=50, blank=True, null=True) # Spirits
-    hierarchy_category = models.CharField(
-        max_length=50, blank=True, null=True) # Whiskey
-    hierarchy_type = models.CharField(
-        max_length=50, blank=True, null=True) # Scotch
-    hierarchy_detail = models.CharField(
-        max_length=50, blank=True, null=True) # Blended/Single Malt
-    hierarchy_fact = models.CharField(
-        max_length=50, blank=True, null=True) # Highland/Speyside/Other
-    hierarchy_imported = models.CharField(
-        max_length=50, blank=True, null=True) # 1
-    hierarchy_flavored = models.CharField(
-        max_length=50, blank=True, null=True) # 0
-    hierarchy_vap = models.CharField(
-        max_length=50, blank=True, null=True) # 0
-    image_url = models.URLField(
-        blank=True, null=True)
-    scotch = models.ForeignKey('Scotch',
-        on_delete=models.SET_NULL, blank=True, null=True)
 
-    class Meta:
-        verbose_name_plural = 'VA Price Info'
-        # unique_together = ('name', 'size',)
-
-    def __str__(self):
-        return f'{self.name} ({self.size})'
 
 # TODO make this a ManyToOne for Distillery (or individual whiskies?)
 # class TasteProfile(models.Model):
