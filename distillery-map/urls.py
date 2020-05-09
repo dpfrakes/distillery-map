@@ -18,7 +18,7 @@ from django.urls import include, path
 from django.views.generic.base import TemplateView
 from rest_framework import routers
 
-from api import views as api_views
+from apps.api import views as api_views
 from apps.entities.views import distillery_detail
 
 router = routers.DefaultRouter()

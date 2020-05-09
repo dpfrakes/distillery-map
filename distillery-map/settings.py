@@ -164,3 +164,5 @@ REST_FRAMEWORK = {
 # DISTILLERY_CSV = 'https://www.datascienceblog.net/data-sets/whiskies.csv'
 DISTILLERY_CSV = os.path.join(BASE_DIR, 'whiskies.csv')
 PLACEHOLDER_IMAGE = 'https://www.undiscoveredscotland.co.uk/usfeatures/maltwhisky/images-washstill/still18-benromach.jpg'
+# Use local JSON files when updating price info
+UPDATE_FROM_LOCAL = False

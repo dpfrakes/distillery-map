@@ -1,5 +1,5 @@
+from apps.api.serializers import DistillerySerializer
 from apps.entities.models import Distillery
-from api.serializers import DistillerySerializer
 from rest_framework import filters, viewsets
 
 

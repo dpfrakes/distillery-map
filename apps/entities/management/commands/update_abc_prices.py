@@ -11,7 +11,6 @@ from apps.entities.models import Distillery, Scotch, VirginiaPriceInfo
 
 
 API_BASE_URL = 'https://www.abc.virginia.gov/coveo/rest/v2'
-USE_LOCAL = True
 
 class Command(BaseCommand):
     help = 'Scrape Virginia ABC website for scotch prices'
@@ -21,7 +20,7 @@ class Command(BaseCommand):
         data = {'results': []}
 
         try:
-            if USE_LOCAL:
+            if settings.UPDATE_FROM_LOCAL:
                 with open(os.path.join(settings.BASE_DIR, 'data', f'{q}.json'), 'r') as f:
                     data = json.load(f)
             else:
