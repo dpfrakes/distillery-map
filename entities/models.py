@@ -107,7 +107,7 @@ class Distillery(models.Model):
 class Scotch(models.Model):
     name = models.CharField(
         max_length=100, unique=True, blank=True, null=True)
-    # Just link Scotch to 750ml product from ABC if one exists
+    # Just link Scotch to 750ml product from Virginia ABC if one exists
     distillery = models.ForeignKey('Distillery',
         on_delete=models.SET_NULL, blank=True, null=True)
 
@@ -118,37 +118,37 @@ class Scotch(models.Model):
         return self.name
 
     def price(self):
-        abc_info = ABCInfo.objects.get(scotch=self, size='750 ml')
-        if abc_info:
-            return abc_info.price
+        va_price_info = VirginiaPriceInfo.objects.get(scotch=self, size='750 ml')
+        if va_price_info:
+            return va_price_info.price
         return None
     price.short_description = 'Price'
     
     def description(self):
-        abc_info = ABCInfo.objects.get(scotch=self, size='750 ml')
-        if abc_info:
-            return abc_info.description
+        va_price_info = VirginiaPriceInfo.objects.get(scotch=self, size='750 ml')
+        if va_price_info:
+            return va_price_info.description
         return None
     description.short_description = 'Description'
 
     @property
     def image_url(self):
-        abc_data = ABCInfo.objects.filter(scotch=self)
-        for info in abc_data:
+        va_price_info = VirginiaPriceInfo.objects.filter(scotch=self)
+        for info in va_price_info:
             if info.image_url:
                 return info.image_url
         return None
     
     @property
     def style(self):
-        abc_info = ABCInfo.objects.get(scotch=self, size='750 ml')
-        if abc_info:
-            return abc_info.hierarchy_detail
+        va_price_info = VirginiaPriceInfo.objects.get(scotch=self, size='750 ml')
+        if va_price_info:
+            return va_price_info.hierarchy_detail
         return ''
 
-class ABCInfo(models.Model):
+class VirginiaPriceInfo(models.Model):
     """
-    Information specific to ABC stores, separated from Scotches
+    Information specific to Virginia ABC stores, separated from Scotches
     for price info, hierarchy, etc. all specific to Virginia ABC
     """
     sku = models.CharField(
@@ -189,7 +189,7 @@ class ABCInfo(models.Model):
         on_delete=models.SET_NULL, blank=True, null=True)
 
     class Meta:
-        verbose_name_plural = 'ABC Info'
+        verbose_name_plural = 'VA Price Info'
         # unique_together = ('name', 'size',)
 
     def __str__(self):

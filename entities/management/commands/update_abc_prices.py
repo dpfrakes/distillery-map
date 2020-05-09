@@ -7,7 +7,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 
-from entities.models import Distillery, Scotch, ABCInfo
+from entities.models import Distillery, Scotch, VirginiaPriceInfo
 
 
 API_BASE_URL = 'https://www.abc.virginia.gov/coveo/rest/v2'
@@ -104,7 +104,7 @@ class Command(BaseCommand):
 
                         try:
                             # Update or create
-                            abc_obj, abc_created = ABCInfo.objects.update_or_create(**attrs)
+                            abc_obj, abc_created = VirginiaPriceInfo.objects.update_or_create(**attrs)
                         except (sqlite3.IntegrityError, IntegrityError):
                             pass
 
