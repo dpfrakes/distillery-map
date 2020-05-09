@@ -25,7 +25,7 @@ class Search extends Component {
       fetch(`/api/distilleries/?search=${q}`)
         .then((data) => data.json())
         .then((json) => {
-          this.setState({autocomplete: json.map((d) => d.name)});
+          this.setState({autocomplete: json.results.map((d) => d.name)});
         });
     } else {
       this.setState({autocomplete: []});
