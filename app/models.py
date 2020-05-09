@@ -1,13 +1,50 @@
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.db import models
+from django.utils.html import format_html
+from django.utils.text import slugify
+
+from django_countries.fields import CountryField
 from location_field.models.spatial import LocationField
 
 from .util import format_coordinates
 
+
+class Company(models.Model):
+    name = models.CharField(
+        max_length=50, unique=True)
+    # hq_location = LocationField(
+    #     blank=True, null=True)
+    country = CountryField(
+        blank=True, null=True)
+    notes = models.TextField(
+        blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = 'Companies'
+
+    def __str__(self):
+       return self.name
+
+    # TODO replace filter with ForeignKey, not name matching
+    def owned_properties(self):
+        try:
+            distilleries = Distillery.objects.filter(owner=self.name).order_by('name')
+            return '\n'.join([f'- {d.name}' for d in distilleries])
+        except Exception as e:
+            print(e)
+            return None
+    owned_properties.short_description = 'Distilleries'
+
+    @property
+    def flag(self):
+        return format_html('<img src="' + self.country.flag + '"/>')
+
 class Distillery(models.Model):
     name = models.CharField(
         max_length=50, unique=True)
+    slug = models.SlugField(
+        blank=True, null=True)
     location = models.CharField(
         max_length=40, blank=True, null=True)
     region = models.CharField(
@@ -26,6 +63,8 @@ class Distillery(models.Model):
         max_length=200, blank=True, null=True)
     logo_url = models.CharField(
         max_length=200, blank=True, null=True)
+    company = models.ForeignKey('Company',
+        on_delete=models.SET_NULL, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = 'Distilleries'
@@ -56,8 +95,10 @@ class Distillery(models.Model):
                 return scotch.image_url
         return settings.PLACEHOLDER_IMAGE
 
-    def __str__(self):
-        return self.name
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        return super().save(*args, **kwargs)
 
 class Scotch(models.Model):
     name = models.CharField(
@@ -68,6 +109,9 @@ class Scotch(models.Model):
 
     class Meta:
         verbose_name_plural = 'Scotches'
+
+    def __str__(self):
+        return self.name
 
     def price(self):
         abc_info = ABCInfo.objects.get(scotch=self, size='750 ml')
@@ -90,9 +134,13 @@ class Scotch(models.Model):
             if info.image_url:
                 return info.image_url
         return None
-
-    def __str__(self):
-        return self.name
+    
+    @property
+    def style(self):
+        abc_info = ABCInfo.objects.get(scotch=self, size='750 ml')
+        if abc_info:
+            return abc_info.hierarchy_detail
+        return ''
 
 class ABCInfo(models.Model):
     """

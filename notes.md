@@ -572,3 +572,13 @@ E
 from app.models import *
 ABCInfo.objects.all().delete()
 Scotch.objects.all().delete()
+
+## Companies and Owners
+
+Owners included in ABC store API data, so now just need to create a new Company model and create instances for each one represented so far.
+
+Most "manual" part of the project so far.
+
+### Naming Things
+
+Coming up with a cool "data sheet" for end users on each distillery: should include list of whiskies made by the distillery. Ended up doing lots of reading/research just from little questions like "what to name the field for 'single malt' or 'blended' whisky."

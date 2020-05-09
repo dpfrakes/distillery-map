@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'location_field.apps.DefaultConfig',
     'django_filters',
+    'django_countries',
     'rest_framework',
     'api',
     'app',
@@ -133,6 +134,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
     os.path.join(BASE_DIR, 'frontend', 'dist'),
+    os.path.join(BASE_DIR, '..', '..', '.virtualenv')
 ]
 
 STATIC_ROOT = 'assets'

@@ -19,7 +19,7 @@ from django.views.generic.base import TemplateView
 from rest_framework import routers
 
 from api import views as api_views
-
+from app.views import distillery_detail
 
 router = routers.DefaultRouter()
 router.register(r'distilleries', api_views.DistilleryViewSet)
@@ -29,4 +29,7 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('admin/', admin.site.urls),
+
+    # Temporary URL for detail page (to be done with React/Redux later)
+    path('distillery/<slug:slug>/', distillery_detail),
 ]
