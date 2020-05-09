@@ -1,4 +1,4 @@
-from app.models import Distillery
+from entities.models import Distillery
 
 from rest_framework import serializers
 
