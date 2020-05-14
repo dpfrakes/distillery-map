@@ -15,8 +15,8 @@ from .util import format_coordinates
 class Company(models.Model):
     name = models.CharField(
         max_length=50, unique=True)
-    # hq_location = LocationField(
-    #     blank=True, null=True)
+    hq_location = LocationField(
+        blank=True, null=True)
     country = CountryField(
         blank=True, null=True)
     notes = models.TextField(
@@ -27,6 +27,18 @@ class Company(models.Model):
 
     def __str__(self):
        return self.name
+
+    @property
+    def latitude(self):
+        if self.hq_location:
+            return self.hq_location.x
+        return ''
+
+    @property
+    def longitude(self):
+        if self.hq_location:
+            return self.hq_location.y
+        return ''
 
     def owned_properties(self):
         try:
@@ -141,6 +153,9 @@ class Scotch(models.Model):
     
     @property
     def style(self):
+        """
+        Single Malt vs Blended
+        """
         va_price_info = VirginiaPriceInfo.objects.get(scotch=self, size='750 ml')
         if va_price_info:
             return va_price_info.hierarchy_detail

@@ -14,7 +14,7 @@ export default () => {
   g = svg.append("g");
 
   // Draw world
-  d3.json("/static/json/topo-uk.json").then((shp, err) => {
+  d3.json("/static/json/topo-world.json").then((shp, err) => {
 
     // Extracting polygons and contours
     var k = Object.keys(shp.objects)[0];

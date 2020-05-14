@@ -22,6 +22,7 @@ from apps.api import views as api_views
 from apps.entities.views import distillery_detail
 
 router = routers.DefaultRouter()
+router.register(r'companies', api_views.CompanyViewSet)
 router.register(r'distilleries', api_views.DistilleryViewSet)
 
 urlpatterns = [

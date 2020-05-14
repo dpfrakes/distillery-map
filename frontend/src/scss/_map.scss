@@ -18,12 +18,16 @@
     /*  0 to 0.5 */
   }
 
-  .distillery {
+  .distillery, .company {
     cursor: pointer;
 
     &:hover {
       fill: white;
     }
+  }
+
+  .company {
+    fill: red;
   }
 }
 

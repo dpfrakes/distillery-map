@@ -1,7 +1,13 @@
-from apps.api.serializers import DistillerySerializer
-from apps.entities.models import Distillery
+from apps.api.serializers import CompanySerializer, DistillerySerializer
+from apps.entities.models import Company, Distillery
 from rest_framework import filters, viewsets
 
+
+class CompanyViewSet(viewsets.ModelViewSet):
+    queryset = Company.objects.all()
+    serializer_class = CompanySerializer
+    search_fields = ['name']
+    filter_backends = (filters.SearchFilter,)
 
 class DistilleryViewSet(viewsets.ModelViewSet):
     """

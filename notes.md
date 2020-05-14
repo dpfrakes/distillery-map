@@ -593,3 +593,7 @@ I want to do a visualization using lines connecting company HQs to owned propert
 World map (high-res) is a lot of data, so using low-res at least for development.
 
 Might end up doing a hybrid approach: https://geojson-maps.ash.ms/ allows individual countries (low-res), so I could do Scotland/UK high-res and all other low? Lower priority for now...
+
+## The more automated the project (data collection, analysis) is, the less you need to know in order to teach
+
+"Shower thought" as I was working on companies and their owned brands. Owners like Suntory, Diageo, and LVMH own more than just distilleries, but beers, perfumes, foods, and luxury items go way outside the scope of my original intention, though that was sort of the point: to learn about just how high this goes.

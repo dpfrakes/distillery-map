@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Company from "./Company";
 import Distillery from "./Distillery";
 import Tooltip from "./Tooltip";
 import drawScotland from "../utils/draw";
@@ -10,7 +11,9 @@ class BaseMap extends Component {
     super(props);
     this.state = {
       darkMode: true,
-      loaded: true,
+      companiesLoaded: false,
+      distilleriesLoaded: false,
+      companies: [],
       distilleries: [],
       activeDistillery: {}
     };
@@ -27,7 +30,15 @@ class BaseMap extends Component {
     fetch('/api/distilleries/')
       .then((data) => data.json())
       .then((res) => {
-        this.setState({distilleries: res.results, loaded: true});
+        this.setState({distilleries: res.results, distilleriesLoaded: true});
+      });
+
+    // fetch company data from API
+    fetch('/api/companies/')
+      .then((data) => data.json())
+      .then((res) => {
+        res.results.forEach((r) => { console.log(r.latitude); });
+        this.setState({companies: res.results, companiesLoaded: true});
       });
 
     // Let React handle click/drag/zoom
@@ -49,7 +60,7 @@ class BaseMap extends Component {
         .attr("class", "distillery")
         .attr("cx", (d) => constants.projection([d.latitude, d.longitude])[0])
         .attr("cy", (d) => constants.projection([d.latitude, d.longitude])[1])
-        .attr("r", (d) => 10 / Math.sqrt(d3.event.transform.k) + "px")
+        .attr("r", (d) => 5 / Math.sqrt(d3.event.transform.k) + "px")
         .attr("fill", (d) => constants.colors[d.region])
         .attr("data-name", (d) => d.name)
         .attr("data-region", (d) => d.region)
@@ -64,6 +75,19 @@ class BaseMap extends Component {
       //   return d;
       // });
       // this.setState({ distilleries });
+
+      svg.selectAll("rect")
+        .remove();
+
+      g.selectAll("rect")
+        .data(this.state.companies.filter((c) => !!c.latitude && !!c.longitude))
+        .enter()
+        .append("rect")
+        .attr("class", "company")
+        .attr("x", (c) => constants.projection([c.latitude, c.longitude])[0])
+        .attr("y", (c) => constants.projection([c.latitude, c.longitude])[1])
+        .attr("width", (c) => 5 / Math.sqrt(d3.event.transform.k) + "px")
+        .attr("height", (c) => 5 / Math.sqrt(d3.event.transform.k) + "px")
     }));
   }
 
@@ -86,12 +110,15 @@ class BaseMap extends Component {
   }
 
   render() {
-    return this.state.loaded && (
+    return (
       <div id="map" className={this.state.darkMode ? "dark" : ""}>
         <button id="toggle-ui-mode" onClick={this._toggleDarkMode}>{this.state.darkMode ? "light" : "dark"}</button>
         <svg onMouseOver={this._onHover}>
-          {this.state.distilleries.filter((d) => !!d.latitude && d.longitude).map((d, i) =>
+          {this.state.distilleriesLoaded && this.state.distilleries.filter((d) => !!d.latitude && d.longitude).map((d, i) =>
             <Distillery key={i} distillery={d} />
+          )}
+          {this.state.companiesLoaded && this.state.companies.filter((c) => !!c.latitude && c.longitude).map((c, i) =>
+            <Company key={i} company={c} />
           )}
         </svg>
         <Tooltip distillery={this.state.activeDistillery} />
