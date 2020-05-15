@@ -3,7 +3,6 @@ import * as topojson from "topojson-client";
 import * as d3 from "d3";
 
 import Company from "./Company";
-import Distillery from "./Distillery";
 import Tooltip from "./Tooltip";
 import constants from "../utils/constants";
 
@@ -20,6 +19,10 @@ class BaseMap extends Component {
       connections: [],
       activeDistillery: {}
     };
+
+    this.path = d3.geoPath()
+      .projection(constants.projection);
+
     this._onHover = this._onHover.bind(this);
     this._toggleDarkMode = this._toggleDarkMode.bind(this);
     this._connectEntities = this._connectEntities.bind(this);
@@ -28,15 +31,10 @@ class BaseMap extends Component {
   componentDidMount() {
 
     // Render base map
-    let svg, g, path;
-    svg = d3.select("body svg")
+    let svg = d3.select("body svg")
       .attr("width", window.innerWidth)
       .attr("height", window.innerHeight);
-
-    g = d3.select("svg g");
-
-    path = d3.geoPath()
-      .projection(constants.projection);
+    let g = d3.select("svg g");
 
     // Draw world
     d3.json("/static/json/topo-world.json").then((shp, err) => {
@@ -51,8 +49,8 @@ class BaseMap extends Component {
         .enter()
         .append("path")
         .attr("class", "country")
-        .attr("d", path);
-      
+        .attr("d", this.path);
+
       // Update state
       this.setState({mapLoaded: true});
     });
@@ -75,6 +73,7 @@ class BaseMap extends Component {
     svg.call(d3.zoom().on('zoom', () => {
       // Set transform based on zoom/translation
       g.attr("transform", d3.event.transform);
+      const zoomLevel = d3.event.transform.k;
 
       // Re-draw distilleries
       g.selectAll("circle")
@@ -86,7 +85,7 @@ class BaseMap extends Component {
         .attr("class", "distillery")
         .attr("cx", (d) => constants.projection([d.latitude, d.longitude])[0])
         .attr("cy", (d) => constants.projection([d.latitude, d.longitude])[1])
-        .attr("r", (d) => 1 / Math.sqrt(d3.event.transform.k) + "px")
+        .attr("r", (d) => 1 / Math.sqrt(zoomLevel) + "px")
         .attr("fill", (d) => constants.colors[d.region])
         .attr("data-name", (d) => d.name)
         .attr("data-region", (d) => d.region)
@@ -102,23 +101,22 @@ class BaseMap extends Component {
         .attr("class", "company")
         .attr("x", (c) => constants.projection([c.latitude, c.longitude])[0])
         .attr("y", (c) => constants.projection([c.latitude, c.longitude])[1])
-        .attr("width", (c) => 5 / Math.sqrt(d3.event.transform.k) + "px")
-        .attr("height", (c) => 5 / Math.sqrt(d3.event.transform.k) + "px");
+        .attr("width", (c) => 5 / Math.sqrt(zoomLevel) + "px")
+        .attr("height", (c) => 5 / Math.sqrt(zoomLevel) + "px");
 
       // Re-draw all connections
+      // https://www.d3-graph-gallery.com/graph/connectionmap_basic.html
       g.selectAll(".connection")
         .remove();
       g.selectAll(".connection")
         .data(this.state.connections)
         .enter()
         .append("path")
-        .attr("d", (p) => path(p))
+        .attr("class", "connection")
+        .attr("d", (p) => this.path(p))
         .style("fill", "none")
-        .style("stroke", "orange")
-        .style("stroke-width", 3);
-
-        // Draw world
-    var links = [{type: "LineString", coordinates: [[100, 60], [30, 0]]}]
+        .style("stroke", "red")
+        .style("stroke-width", 0.2 / Math.sqrt(zoomLevel) + "px");
 
     }));
   }
@@ -128,10 +126,16 @@ class BaseMap extends Component {
   }
 
   _connectEntities() {
-    console.log(`[${this.state.distilleriesLoaded ? 'x' : ' '}] distilleries loaded`)
-    console.log(`[${this.state.companiesLoaded ? 'x' : ' '}] companies loaded`)
+    // Draw connections between companies and distilleries
     if (this.state.distilleriesLoaded && this.state.companiesLoaded) {
-      console.log('make those connections@!');
+      let connections = [];
+      this.state.companies.forEach((c) => {
+        c.distilleries.forEach((d) => {
+          if (d.latitude && d.longitude && c.latitude && c.longitude)
+            connections.push({type: "LineString", coordinates: [[d.latitude, d.longitude], [c.latitude, c.longitude]]});
+        })
+      });
+      this.setState({connections});
     }
   }
 
@@ -161,11 +165,8 @@ class BaseMap extends Component {
         <button id="toggle-ui-mode" onClick={this._toggleDarkMode}>{this.state.darkMode ? "light" : "dark"}</button>
         <svg onMouseOver={this._onHover}>
           <g>
-            {this.state.distilleriesLoaded && this.state.distilleries.filter((d) => !!d.latitude && d.longitude).map((d, i) =>
-              <Distillery key={i} distillery={d} />
-            )}
             {this.state.companiesLoaded && this.state.companies.filter((c) => !!c.latitude && c.longitude).map((c, i) =>
-              <Company key={i} company={c} />
+              <Company key={i} company={c} path={this.path} />
             )}
           </g>
         </svg>
