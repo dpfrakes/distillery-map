@@ -40,6 +40,13 @@ class Company(models.Model):
             return self.hq_location.y
         return ''
 
+    def distilleries(self):
+        try:
+            return Distillery.objects.filter(owner=self).order_by('name')
+        except Exception as e:
+            return []
+    distilleries.short_description = 'Distilleries'
+
     def owned_properties(self):
         try:
             distilleries = Distillery.objects.filter(owner=self).order_by('name')
@@ -47,7 +54,7 @@ class Company(models.Model):
             return format_html('<br/>'.join(distillery_list))
         except Exception as e:
             return ''
-    owned_properties.short_description = 'Distilleries'
+    owned_properties.short_description = 'Owned Distilleries'
 
     @property
     def flag(self):
