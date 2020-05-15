@@ -13,8 +13,6 @@ class Company extends Component {
     // Transform coordinates based on projection
     const { company } = this.props;
     const projected = constants.projection([company.latitude, company.longitude]);
-    console.log('projected coordinates:');
-    console.log(projected);
     this.setState({coordinates: projected});
   }
 

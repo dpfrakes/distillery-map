@@ -17,14 +17,14 @@ class Distillery extends Component {
   }
 
   render() {
-    const distillery = this.props.distillery;
+    const { distillery } = this.props;
 
     return (
       <circle
         className="distillery"
         cx={this.state.coordinates[0]}
         cy={this.state.coordinates[1]}
-        r="5px"
+        r="1px"
         fill={constants.colors[distillery.region]}
         data-name={distillery.name}
         data-region={distillery.region}

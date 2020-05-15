@@ -597,3 +597,13 @@ Might end up doing a hybrid approach: https://geojson-maps.ash.ms/ allows indivi
 ## The more automated the project (data collection, analysis) is, the less you need to know in order to teach
 
 "Shower thought" as I was working on companies and their owned brands. Owners like Suntory, Diageo, and LVMH own more than just distilleries, but beers, perfumes, foods, and luxury items go way outside the scope of my original intention, though that was sort of the point: to learn about just how high this goes.
+
+### Connecting companies to distilleries
+
+https://www.d3-graph-gallery.com/graph/connectionmap_basic.html
+
+Did a cool loading sub-screen with "✅" next to each of "map," "distilleries," and "companies."
+
+Unfortunately, since the lines connecting distilleries to their respective companies rely on both, I needed to tweak the backend to make it one "Entities" API call that included location data, as well as relational data between companies and distillleries.
+
+(A little research confirmed that generallly, one HTTP request is better than many small ones, e.g. one for every entity.)
