@@ -39,9 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'location_field.apps.DefaultConfig',
     'django_filters',
+    'django_countries',
     'rest_framework',
-    'api',
-    'app',
+    'apps.api',
+    'apps.entities',
+    'apps.pricing',
 ]
 
 MIDDLEWARE = [
@@ -133,6 +135,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
     os.path.join(BASE_DIR, 'frontend', 'dist'),
+    os.path.join(BASE_DIR, '..', '..', '.virtualenv')
 ]
 
 STATIC_ROOT = 'assets'
@@ -151,12 +154,15 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication'
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+    'rest_framework.permissions.AllowAny',
     ]
 }
-
-
 
 # Custom variables
 # DISTILLERY_CSV = 'https://www.datascienceblog.net/data-sets/whiskies.csv'
 DISTILLERY_CSV = os.path.join(BASE_DIR, 'whiskies.csv')
 PLACEHOLDER_IMAGE = 'https://www.undiscoveredscotland.co.uk/usfeatures/maltwhisky/images-washstill/still18-benromach.jpg'
+# Use local JSON files when updating price info
+UPDATE_FROM_LOCAL = False

@@ -572,3 +572,38 @@ E
 from app.models import *
 ABCInfo.objects.all().delete()
 Scotch.objects.all().delete()
+
+## Companies and Owners
+
+Owners included in ABC store API data, so now just need to create a new Company model and create instances for each one represented so far.
+
+Most "manual" part of the project so far.
+
+### Naming Things
+
+Coming up with a cool "data sheet" for end users on each distillery: should include list of whiskies made by the distillery. Ended up doing lots of reading/research just from little questions like "what to name the field for 'single malt' or 'blended' whisky."
+
+### World Map
+
+For companies located in other countries
+
+
+I want to do a visualization using lines connecting company HQs to owned properties across the globe. Cool viz/animation opportunities here.
+
+World map (high-res) is a lot of data, so using low-res at least for development.
+
+Might end up doing a hybrid approach: https://geojson-maps.ash.ms/ allows individual countries (low-res), so I could do Scotland/UK high-res and all other low? Lower priority for now...
+
+## The more automated the project (data collection, analysis) is, the less you need to know in order to teach
+
+"Shower thought" as I was working on companies and their owned brands. Owners like Suntory, Diageo, and LVMH own more than just distilleries, but beers, perfumes, foods, and luxury items go way outside the scope of my original intention, though that was sort of the point: to learn about just how high this goes.
+
+### Connecting companies to distilleries
+
+https://www.d3-graph-gallery.com/graph/connectionmap_basic.html
+
+Did a cool loading sub-screen with "✅" next to each of "map," "distilleries," and "companies."
+
+Unfortunately, since the lines connecting distilleries to their respective companies rely on both, I needed to tweak the backend to make it one "Entities" API call that included location data, as well as relational data between companies and distillleries.
+
+(A little research confirmed that generallly, one HTTP request is better than many small ones, e.g. one for every entity.)
