@@ -3,6 +3,7 @@ import * as topojson from "topojson-client";
 import * as d3 from "d3";
 
 import Company from "./Company";
+import Search from "./Search";
 import Tooltip from "./Tooltip";
 import constants from "../utils/constants";
 
@@ -17,7 +18,9 @@ class BaseMap extends Component {
       companies: [],
       distilleries: [],
       connections: [],
-      activeDistillery: {}
+      activeDistillery: {},
+      activeCompany: {},
+      persistActiveEntities: true
     };
 
     this.path = d3.geoPath()
@@ -102,7 +105,8 @@ class BaseMap extends Component {
         .attr("x", (c) => constants.projection([c.latitude, c.longitude])[0])
         .attr("y", (c) => constants.projection([c.latitude, c.longitude])[1])
         .attr("width", (c) => 5 / Math.sqrt(zoomLevel) + "px")
-        .attr("height", (c) => 5 / Math.sqrt(zoomLevel) + "px");
+        .attr("height", (c) => 5 / Math.sqrt(zoomLevel) + "px")
+        .attr("data-name", (c) => c.name);
 
       // Re-draw all connections
       // https://www.d3-graph-gallery.com/graph/connectionmap_basic.html
@@ -144,34 +148,42 @@ class BaseMap extends Component {
     // 1. Tooltip is controlled by BaseMap
     // 2. Cannot implement onMouseOver directly on React component
     // 3. Distillery component renders as <circle> immediately inside <svg> (no good DOM structure alternatives)
+    let activeDistillery, activeCompany;
+
     if (e.target.classList[0] == 'distillery') {
       let { distilleries } = this.state || [];
-      let activeDistillery = distilleries.filter((d) => d.name == e.target.getAttribute('data-name'))[0];
-      this.setState({activeDistillery});
-    } else {
-      this.setState({activeDistillery: undefined});
+      activeDistillery = distilleries.filter((d) => d.name == e.target.getAttribute('data-name'))[0];
+      activeCompany = undefined;
+    } else if (e.target.classList[0] == 'company') {
+      let { companies } = this.state || [];
+      activeCompany = companies.filter((d) => d.name == e.target.getAttribute('data-name'))[0];
+      activeDistillery = undefined;
     }
+    this.setState({activeDistillery, activeCompany});
   }
 
   render() {
     // Place all drawn shapes inside <g> to share transform
     return (
-      <div id="map" className={this.state.darkMode ? "dark" : ""}>
-        <div style={{position: "absolute", bottom: 20, right: 20, background: "rgba(255, 255, 255, 0.5)", width: 300, padding: 10, fontFamily: "monospace"}}>
-            <p>{this.state.companiesLoaded ? "✅ " : "..."}companies</p>
-            <p>{this.state.distilleriesLoaded ? "✅ " : "..."}distilleries</p>
-            <p>{this.state.mapLoaded ? "✅ " : "..."}map</p>
+      <>
+        <div id="map" className={this.state.darkMode ? "dark" : ""}>
+          <div style={{position: "absolute", bottom: 20, right: 20, background: "rgba(255, 255, 255, 0.5)", width: 300, padding: 10, fontFamily: "monospace"}}>
+              <p>{this.state.companiesLoaded ? "✅ " : "..."}companies</p>
+              <p>{this.state.distilleriesLoaded ? "✅ " : "..."}distilleries</p>
+              <p>{this.state.mapLoaded ? "✅ " : "..."}map</p>
+          </div>
+          <button id="toggle-ui-mode" onClick={this._toggleDarkMode}>{this.state.darkMode ? "light" : "dark"}</button>
+          <svg onMouseOver={this._onHover}>
+            <g>
+              {this.state.companiesLoaded && this.state.companies.filter((c) => !!c.latitude && c.longitude).map((c, i) =>
+                <Company key={i} company={c} path={this.path} />
+              )}
+            </g>
+          </svg>
+          <Tooltip distillery={this.state.activeDistillery} company={this.state.activeCompany} />
         </div>
-        <button id="toggle-ui-mode" onClick={this._toggleDarkMode}>{this.state.darkMode ? "light" : "dark"}</button>
-        <svg onMouseOver={this._onHover}>
-          <g>
-            {this.state.companiesLoaded && this.state.companies.filter((c) => !!c.latitude && c.longitude).map((c, i) =>
-              <Company key={i} company={c} path={this.path} />
-            )}
-          </g>
-        </svg>
-        <Tooltip distillery={this.state.activeDistillery} />
-      </div>
+        <Search distilleries={this.state.distilleries} companies={this.state.companies} />
+      </>
     );
   }
 }

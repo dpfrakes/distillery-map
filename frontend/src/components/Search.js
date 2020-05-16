@@ -5,7 +5,7 @@ class Search extends Component {
     super(props);
     this.state = {
       q: '',
-      autocomplete: [],
+      autocomplete: {},
       options: []
     };
     this._handleSubmit = this._handleSubmit.bind(this);
@@ -19,17 +19,28 @@ class Search extends Component {
 
   _handleType(e) {
     let q = e.target.value;
+    let autocomplete = {};
+
     this.setState({q});
     if (q) {
-      // TODO replace with react search
-      fetch(`/api/distilleries/?search=${q}`)
-        .then((data) => data.json())
-        .then((json) => {
-          this.setState({autocomplete: json.results.map((d) => d.name)});
-        });
-    } else {
-      this.setState({autocomplete: []});
+      const matchingDistilleries = this.props.distilleries.filter((d) => d.name.toLowerCase().indexOf(q.toLowerCase()) >= 0);
+      if (matchingDistilleries.length > 0) {
+        autocomplete['distilleries'] = matchingDistilleries;
+      }
+
+      const matchingCompanies = this.props.companies.filter((c) => c.name.toLowerCase().indexOf(q.toLowerCase()) >= 0);
+      if (matchingCompanies.length > 0) {
+        autocomplete['companies'] = matchingCompanies;
+      }
+
+      // // TODO replace with react search
+      // fetch(`/api/distilleries/?search=${q}`)
+      //   .then((data) => data.json())
+      //   .then((json) => {
+      //     this.setState({autocomplete: json.results.map((d) => d.name)});
+      //   });
     }
+    this.setState({autocomplete});
   }
 
   _handleSubmit(e) {
@@ -42,7 +53,7 @@ class Search extends Component {
   _focusDistillery(e) {
     this.setState({
       q: e.target.innerText,
-      autocomplete: []
+      autocomplete: {}
     });
   }
 
@@ -54,11 +65,18 @@ class Search extends Component {
           <input type="text" name="q" id="searchbar" autoComplete="off" value={this.state.q} onChange={this._handleType} />
         </form>
 
-        <ul id="autocomplete-results">
-          {this.state.autocomplete.map((result, i) =>
-            <li key={i} onClick={this._focusDistillery}>{result}</li>
-          )}
-        </ul>
+        {Object.keys(this.state.autocomplete).length ? (
+          <ul id="autocomplete-results">
+            {Object.keys(this.state.autocomplete).map((a, i) =>
+              <React.Fragment key={i}>
+                <div className="autocomplete-section">{a}</div>
+                {this.state.autocomplete[a].map((b, j) =>
+                  <li key={j} onClick={this._focusDistillery}>{b.name}</li>
+                )}
+              </React.Fragment>
+            )}
+          </ul>
+        ) : <></>}
 
         <ul id="options">
           {this.state.options.map((opt) => {

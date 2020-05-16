@@ -4,7 +4,7 @@ class Tooltip extends Component {
   render() {
     const defaultBackground = "https://www.undiscoveredscotland.co.uk/usfeatures/maltwhisky/images-washstill/still18-benromach.jpg";
 
-    return this.props.distillery ? (
+    return !!this.props.distillery ? (
       <div className="tooltip" style={{backgroundImage: `url(${this.props.distillery.image || defaultBackground})`}}>
         <div className="distillery-info">
           <h2>{this.props.distillery.name}</h2>
@@ -14,9 +14,14 @@ class Tooltip extends Component {
           <p>{this.props.distillery.year_established}</p>
         </div>
       </div>
-    ) : (
-      <></>
-    );
+    ) : (this.props.company ? (
+      <div className="tooltip" style={{backgroundImage: `url(${this.props.company.image || defaultBackground})`}}>
+        <div className="company-info">
+          <h2>{this.props.company.name}</h2>
+          <p>{this.props.company.coordinates}</p>
+        </div>
+      </div>
+    ) : <></>);
   }
 }
 
