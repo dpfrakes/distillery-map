@@ -20,15 +20,8 @@
 
   .distillery, .company {
     cursor: pointer;
-
-    &:hover {
-      fill: white;
-    }
   }
 
-  .company {
-    fill: red;
-  }
 }
 
 #toggle-ui-mode {

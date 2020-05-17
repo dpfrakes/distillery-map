@@ -119,8 +119,8 @@ class BaseMap extends Component {
     if (e.target.classList[0] == 'distillery') {
       let { distilleries } = this.state || [];
       activeEntity = {
-        "type": "distillery",
-        "info": distilleries.filter((d) => d.name == e.target.getAttribute('data-name'))[0]
+        type: "distillery",
+        info: distilleries.filter((d) => d.name == e.target.getAttribute('data-name'))[0]
       }
     } else if (e.target.classList[0] == 'company') {
       let { companies } = this.state || [];
