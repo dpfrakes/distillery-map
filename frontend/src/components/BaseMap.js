@@ -168,7 +168,7 @@ class BaseMap extends Component {
           <svg onMouseOver={this._onHover}>
             <g>
               {this.state.companiesLoaded && this.state.companies.filter((c) => !!c.latitude && c.longitude).map((c, i) =>
-                <Company key={i} company={c} path={this.path} zoomLevel={this.state.zoomLevel} />
+                <Company key={i} company={c} path={this.path} zoomLevel={this.state.zoomLevel} active={this.state.activeEntity ? this.state.activeEntity.info == c : false} />
               )}
             </g>
           </svg>

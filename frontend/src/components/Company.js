@@ -7,11 +7,18 @@ class Company extends Component {
     super(props);
     this.state = {
       coordinates: [],
-      active: false,
+      active: props.active,
       // also track active children to highlight individual connection
       activeDistillery: ''
     };
+    this._handleMouse = this._handleMouse.bind(this);
     this._setActiveDistillery = this._setActiveDistillery.bind(this);
+  }
+
+  _handleMouse(e) {
+    // Set to active if event is mouseover (otherwise deactivate)
+    const active = e.type == 'mouseover' || this.props.active;
+    this.setState({active});
   }
 
   _setActiveDistillery(activeDistillery) {
@@ -35,12 +42,12 @@ class Company extends Component {
           className="company"
           x={this.state.coordinates[0]}
           y={this.state.coordinates[1]}
-          fill={this.state.active ? "blue" : "black"}
+          fill={(this.props.active || this.state.active) ? "blue" : "black"}
           width={`${3 / Math.sqrt(this.props.zoomLevel)}px`}
           height={`${3 / Math.sqrt(this.props.zoomLevel)}px`}
           data-name={company.name}
-          onMouseOver={() => { this.setState({active: true}) }}
-          onMouseLeave={() => { this.setState({active: false }) }}
+          onMouseOver={() => {this._handleMouse}}
+          onMouseLeave={() => {this._handleMouse}}
           />
         {company.distilleries.map((d, i) => {
           return (
@@ -49,7 +56,7 @@ class Company extends Component {
                 className="connection"
                 d={this.props.path({type: "LineString", coordinates: [[d.latitude, d.longitude], [company.latitude, company.longitude]]})}
                 fill="none"
-                stroke={(this.state.active || this.state.activeDistillery == d) ? "blue" : "gray"}
+                stroke={(this.props.active || this.state.active || this.state.activeDistillery == d) ? "blue" : "gray"}
                 strokeWidth={`${0.2 / Math.sqrt(this.props.zoomLevel)}px`}
               ></path>
               <Distillery distillery={d} hq={company} path={this.props.path} zoomLevel={this.props.zoomLevel} cb={this._setActiveDistillery} />
