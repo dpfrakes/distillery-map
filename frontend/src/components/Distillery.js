@@ -8,6 +8,16 @@ class Distillery extends Component {
       coordinates: [],
       active: false
     };
+    this._handleMouse = this._handleMouse.bind(this);
+  }
+
+  _handleMouse(e) {
+    // Set to active if event is mouseover (otherwise deactivate)
+    const active = e.type == 'mouseover';
+    this.setState({active});
+
+    // Use callback function to notify parent element to highlight connection accordingly
+    this.props.cb(active ? this.props.distillery : '');
   }
 
   componentDidMount() {
@@ -30,8 +40,8 @@ class Distillery extends Component {
         data-name={distillery.name}
         data-region={distillery.region}
         data-year-est={distillery.year_established}
-        onMouseOver={() => { this.setState({active: true}) }}
-        onMouseLeave={() => { this.setState({active: false }) }}
+        onMouseOver={this._handleMouse}
+        onMouseLeave={this._handleMouse}
       ></circle>
     );
   }

@@ -7,8 +7,16 @@ class Company extends Component {
     super(props);
     this.state = {
       coordinates: [],
-      active: false
+      active: false,
+      // also track active children to highlight individual connection
+      activeDistillery: ''
     };
+    this._setActiveDistillery = this._setActiveDistillery.bind(this);
+  }
+
+  _setActiveDistillery(activeDistillery) {
+    // Callback function to set active distillery on hover
+    this.setState({activeDistillery});
   }
 
   componentDidMount() {
@@ -41,10 +49,10 @@ class Company extends Component {
                 className="connection"
                 d={this.props.path({type: "LineString", coordinates: [[d.latitude, d.longitude], [company.latitude, company.longitude]]})}
                 fill="none"
-                stroke={this.state.active ? "blue" : "gray"}
+                stroke={(this.state.active || this.state.activeDistillery == d) ? "blue" : "gray"}
                 strokeWidth={`${0.2 / Math.sqrt(this.props.zoomLevel)}px`}
               ></path>
-              <Distillery distillery={d} zoomLevel={this.props.zoomLevel} />
+              <Distillery distillery={d} hq={company} path={this.props.path} zoomLevel={this.props.zoomLevel} cb={this._setActiveDistillery} />
             </React.Fragment>
           )
         })}
