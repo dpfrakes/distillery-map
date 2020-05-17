@@ -1,8 +1,7 @@
 .tooltip {
   position: absolute;
-  // top: 0;
-  bottom: 20px;
-  left: 20px;
+  top: 60px;
+  left: 10px;
   height: 300px;
   width: 400px;
   z-index: 2;
@@ -10,7 +9,7 @@
   background-size: cover;
   background-repeat: no-repeat;
   // mask-image: linear-gradient(to right, black 0%, black 60%, rgba(0,0,0,0) 100%);
-  pointer-events: none;
+  // pointer-events: none;
 
   .distillery-info, .company-info {
     position: absolute;

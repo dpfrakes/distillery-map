@@ -24,7 +24,9 @@ class Tooltip extends Component {
         <div className="tooltip" style={{backgroundImage: `url(${info.image || defaultBackground})`}}>
           <div className="entity-info">
             <h2>{info.name}</h2>
-            {info.distilleries.map((d) => d.name).join(", ")}
+            {info.distilleries.map((d, i) =>
+              <React.Fragment key={i}>{d.name}<br/></React.Fragment>
+            )}
           </div>
         </div>
       ) : <></>
