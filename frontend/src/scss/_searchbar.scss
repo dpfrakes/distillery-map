@@ -1,11 +1,30 @@
+$sidebar-width: 400px;
+
 #search {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 0;
+  left: -$sidebar-width;
+  bottom: 0;
+  width: $sidebar-width;
+  padding: 10px;
   z-index: 3;
+  background: transparent;
+  pointer-events: none;
+
+  &.open {
+    left: 0;
+  }
+
+  > * {
+    pointer-events: all;
+  }
 
   #searchbar {
+    width: 100%;
     padding: 5px;
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
   }
 
   #autocomplete-results {

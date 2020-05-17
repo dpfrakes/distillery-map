@@ -5,6 +5,7 @@ class Search extends Component {
     super(props);
     this.state = {
       q: '',
+      sidebarOpen: true,
       autocomplete: {},
       options: []
     };
@@ -59,7 +60,7 @@ class Search extends Component {
 
   render() {
     return (
-      <div id="search">
+      <div id="search" className={this.state.sidebarOpen ? "open" : ""}>
 
         <form onSubmit={this._handleSubmit}>
           <input type="text" name="q" id="searchbar" autoComplete="off" value={this.state.q} onChange={this._handleType} />
