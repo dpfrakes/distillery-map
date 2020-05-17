@@ -13,8 +13,8 @@ class Company extends Component {
   componentDidMount() {
     // Transform coordinates based on projection
     const { company } = this.props;
-    const projected = constants.projection([company.latitude, company.longitude]);
-    this.setState({coordinates: projected});
+    const coordinates = constants.projection([company.latitude, company.longitude]);
+    this.setState({coordinates});
   }
 
   render() {
@@ -26,8 +26,8 @@ class Company extends Component {
           className="company"
           x={this.state.coordinates[0]}
           y={this.state.coordinates[1]}
-          width="5px"
-          height="5px"
+          width={`${5 / Math.sqrt(this.props.zoomLevel)}px`}
+          height={`${5 / Math.sqrt(this.props.zoomLevel)}px`}
           data-name={company.name}
         />
         {company.distilleries.map((d, i) => {
@@ -38,9 +38,9 @@ class Company extends Component {
                 d={this.props.path({type: "LineString", coordinates: [[d.latitude, d.longitude], [company.latitude, company.longitude]]})}
                 fill="none"
                 stroke="red"
-                strokeWidth="0.2"
+                strokeWidth={`${0.2 / Math.sqrt(this.props.zoomLevel)}px`}
               ></path>
-              <Distillery distillery={d} />
+              <Distillery distillery={d} zoomLevel={this.props.zoomLevel} />
             </React.Fragment>
           )
         })}

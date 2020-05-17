@@ -9,7 +9,7 @@ class Search extends Component {
       autocomplete: {},
       options: []
     };
-    this._handleSubmit = this._handleSubmit.bind(this);
+
     this._handleType = this._handleType.bind(this);
     this._onSelect = this._onSelect.bind(this);
   }
@@ -22,7 +22,6 @@ class Search extends Component {
     let q = e.target.value;
     let autocomplete = {};
 
-    this.setState({q});
     if (q) {
       const matchingDistilleries = this.props.distilleries.filter((d) => d.name.toLowerCase().indexOf(q.toLowerCase()) >= 0);
       if (matchingDistilleries.length > 0) {
@@ -33,22 +32,8 @@ class Search extends Component {
       if (matchingCompanies.length > 0) {
         autocomplete['companies'] = matchingCompanies;
       }
-
-      // // TODO replace with react search
-      // fetch(`/api/distilleries/?search=${q}`)
-      //   .then((data) => data.json())
-      //   .then((json) => {
-      //     this.setState({autocomplete: json.results.map((d) => d.name)});
-      //   });
     }
-    this.setState({autocomplete});
-  }
-
-  _handleSubmit(e) {
-    e.preventDefault();
-    fetch(`/api/distilleries/?search=${this.state.q}`)
-      .then((data) => data.json())
-      .then((json) => console.log(json));
+    this.setState({q, autocomplete});
   }
 
   _onSelect(e) {
@@ -67,10 +52,10 @@ class Search extends Component {
 
   render() {
     return (
-      <div id="search" className={this.state.sidebarOpen ? "open" : ""}>
+      <div id="sidebar" className={this.state.sidebarOpen ? "open" : ""}>
 
-        <form onSubmit={this._handleSubmit}>
-          <input type="text" name="q" id="searchbar" autoComplete="off" value={this.state.q} onChange={this._handleType} />
+        <form onSubmit={(e) => e.preventDefault()}>
+          <input type="text" name="q" id="search" autoComplete="off" value={this.state.q} onChange={this._handleType} />
         </form>
 
         {Object.keys(this.state.autocomplete).length ? (

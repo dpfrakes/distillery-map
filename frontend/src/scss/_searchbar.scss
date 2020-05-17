@@ -1,6 +1,6 @@
 $sidebar-width: 400px;
 
-#search {
+#sidebar {
   position: absolute;
   top: 0;
   left: -$sidebar-width;
@@ -19,7 +19,7 @@ $sidebar-width: 400px;
     pointer-events: all;
   }
 
-  #searchbar {
+  #search {
     width: 100%;
     padding: 5px;
     -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */

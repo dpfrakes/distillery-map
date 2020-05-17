@@ -12,8 +12,8 @@ class Distillery extends Component {
   componentDidMount() {
     // Transform coordinates based on projection
     const { distillery } = this.props;
-    const projected = constants.projection([distillery.latitude, distillery.longitude]);
-    this.setState({coordinates: projected});
+    const coordinates = constants.projection([distillery.latitude, distillery.longitude]);
+    this.setState({coordinates});
   }
 
   render() {
@@ -24,7 +24,7 @@ class Distillery extends Component {
         className="distillery"
         cx={this.state.coordinates[0]}
         cy={this.state.coordinates[1]}
-        r="1px"
+        r={`${1 / Math.sqrt(this.props.zoomLevel)}px`}
         fill={constants.colors[distillery.region]}
         data-name={distillery.name}
         data-region={distillery.region}

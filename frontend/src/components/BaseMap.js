@@ -27,6 +27,9 @@ class BaseMap extends Component {
       // Active status for tooltip and other viz
       activeDistillery: {},
       activeCompany: {},
+
+      // Propagate d3 zoom level to redraw child components
+      zoomLevel: 1
     };
 
     this.path = d3.geoPath()
@@ -83,51 +86,7 @@ class BaseMap extends Component {
     svg.call(d3.zoom().on('zoom', () => {
       // Set transform based on zoom/translation
       g.attr("transform", d3.event.transform);
-      const zoomLevel = d3.event.transform.k;
-
-      // Re-draw distilleries
-      g.selectAll("circle")
-        .remove();
-      g.selectAll("circle")
-        .data(this.state.distilleries.filter((d) => !!d.latitude && !!d.longitude))
-        .enter()
-        .append("circle")
-        .attr("class", "distillery")
-        .attr("cx", (d) => constants.projection([d.latitude, d.longitude])[0])
-        .attr("cy", (d) => constants.projection([d.latitude, d.longitude])[1])
-        .attr("r", (d) => 1 / Math.sqrt(zoomLevel) + "px")
-        .attr("fill", (d) => constants.colors[d.region])
-        .attr("data-name", (d) => d.name)
-        .attr("data-region", (d) => d.region)
-        .attr("data-year-est", (d) => d.year_established);
-
-      // Re-draw all companies
-      g.selectAll("rect")
-        .remove();
-      g.selectAll("rect")
-        .data(this.state.companies.filter((c) => !!c.latitude && !!c.longitude))
-        .enter()
-        .append("rect")
-        .attr("class", "company")
-        .attr("x", (c) => constants.projection([c.latitude, c.longitude])[0])
-        .attr("y", (c) => constants.projection([c.latitude, c.longitude])[1])
-        .attr("width", (c) => 5 / Math.sqrt(zoomLevel) + "px")
-        .attr("height", (c) => 5 / Math.sqrt(zoomLevel) + "px")
-        .attr("data-name", (c) => c.name);
-
-      // Re-draw all connections
-      // https://www.d3-graph-gallery.com/graph/connectionmap_basic.html
-      g.selectAll(".connection")
-        .remove();
-      g.selectAll(".connection")
-        .data(this.state.connections)
-        .enter()
-        .append("path")
-        .attr("class", "connection")
-        .attr("d", (p) => this.path(p))
-        .style("fill", "none")
-        .style("stroke", "red")
-        .style("stroke-width", 0.2 / Math.sqrt(zoomLevel) + "px");
+      this.setState({zoomLevel: d3.event.transform.k});
     }));
   }
 
@@ -202,13 +161,13 @@ class BaseMap extends Component {
           <svg onMouseOver={this._onHover}>
             <g>
               {this.state.companiesLoaded && this.state.companies.filter((c) => !!c.latitude && c.longitude).map((c, i) =>
-                <Company key={i} company={c} path={this.path} />
+                <Company key={i} company={c} path={this.path} zoomLevel={this.state.zoomLevel} />
               )}
             </g>
           </svg>
-          <Tooltip distillery={this.state.activeDistillery} company={this.state.activeCompany} />
         </div>
         <Search distilleries={this.state.distilleries} companies={this.state.companies} onSelect={this._activate} />
+        <Tooltip distillery={this.state.activeDistillery} company={this.state.activeCompany} />
       </>
     );
   }
