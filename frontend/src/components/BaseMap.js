@@ -167,7 +167,7 @@ class BaseMap extends Component {
           <button id="toggle-ui-mode" onClick={this._toggleDarkMode}>{this.state.darkMode ? "light" : "dark"}</button>
           <svg onMouseOver={this._onHover}>
             <g>
-              {this.state.companiesLoaded && this.state.companies.filter((c) => !!c.latitude && c.longitude).map((c, i) =>
+              {this.state.companiesLoaded && this.state.companies.map((c, i) =>
                 <Company key={i} company={c} path={this.path} zoomLevel={this.state.zoomLevel} active={this.state.activeEntity ? this.state.activeEntity.info == c : false} />
               )}
             </g>

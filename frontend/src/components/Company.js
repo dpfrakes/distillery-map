@@ -38,7 +38,7 @@ class Company extends Component {
 
     return (
       <>
-        <rect
+        {company.latitude && company.longitude && <rect
           className="company"
           x={this.state.coordinates[0]}
           y={this.state.coordinates[1]}
@@ -48,18 +48,19 @@ class Company extends Component {
           data-name={company.name}
           onMouseOver={() => {this._handleMouse}}
           onMouseLeave={() => {this._handleMouse}}
-          />
+          />}
         {company.distilleries.map((d, i) => {
+          // console.log(d);
           return (
             <React.Fragment key={i}>
-              <path
+              {company.latitude && company.longitude && <path
                 className="connection"
                 d={this.props.path({type: "LineString", coordinates: [[d.latitude, d.longitude], [company.latitude, company.longitude]]})}
                 fill="none"
                 stroke={(this.props.active || this.state.active || this.state.activeDistillery == d) ? "blue" : "gray"}
                 strokeWidth={`${0.2 / Math.sqrt(this.props.zoomLevel)}px`}
-              ></path>
-              <Distillery distillery={d} hq={company} path={this.props.path} zoomLevel={this.props.zoomLevel} cb={this._setActiveDistillery} />
+              ></path>}
+              {d.latitude && d.longitude && <Distillery distillery={d} hq={company} path={this.props.path} zoomLevel={this.props.zoomLevel} cb={this._setActiveDistillery} />}
             </React.Fragment>
           )
         })}

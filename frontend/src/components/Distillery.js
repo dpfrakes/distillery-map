@@ -30,7 +30,7 @@ class Distillery extends Component {
   render() {
     const { distillery } = this.props;
 
-    return (
+    return this.state.coordinates && (
       <circle
         className="distillery"
         cx={this.state.coordinates[0]}
