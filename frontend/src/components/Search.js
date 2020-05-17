@@ -11,7 +11,7 @@ class Search extends Component {
     };
     this._handleSubmit = this._handleSubmit.bind(this);
     this._handleType = this._handleType.bind(this);
-    this._focusDistillery = this._focusDistillery.bind(this);
+    this._onSelect = this._onSelect.bind(this);
   }
 
   componentDidMount() {
@@ -51,11 +51,18 @@ class Search extends Component {
       .then((json) => console.log(json));
   }
 
-  _focusDistillery(e) {
+  _onSelect(e) {
+    // Complete query string and clear autocomplete results
     this.setState({
       q: e.target.innerText,
       autocomplete: {}
     });
+
+    // Notify BaseMap component of active entity (and its type) via callback fn
+    if (this.props.onSelect) {
+      const entitySection = e.target.getAttribute('data-entity-section');
+      this.props.onSelect(entitySection, e.target.innerText);
+    }
   }
 
   render() {
@@ -72,7 +79,7 @@ class Search extends Component {
               <React.Fragment key={i}>
                 <div className="autocomplete-section">{a}</div>
                 {this.state.autocomplete[a].map((b, j) =>
-                  <li key={j} onClick={this._focusDistillery}>{b.name}</li>
+                  <li key={j} onClick={this._onSelect} data-entity-section={a}>{b.name}</li>
                 )}
               </React.Fragment>
             )}

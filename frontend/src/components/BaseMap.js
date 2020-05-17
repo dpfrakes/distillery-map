@@ -11,16 +11,22 @@ class BaseMap extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      // Light/dark mode
       darkMode: true,
+
+      // Track status
       mapLoaded: false,
       companiesLoaded: false,
       distilleriesLoaded: false,
+
+      // Data collected from BE
       companies: [],
       distilleries: [],
       connections: [],
+
+      // Active status for tooltip and other viz
       activeDistillery: {},
       activeCompany: {},
-      persistActiveEntities: true
     };
 
     this.path = d3.geoPath()
@@ -29,6 +35,7 @@ class BaseMap extends Component {
     this._onHover = this._onHover.bind(this);
     this._toggleDarkMode = this._toggleDarkMode.bind(this);
     this._connectEntities = this._connectEntities.bind(this);
+    this._activate = this._activate.bind(this);
   }
 
   componentDidMount() {
@@ -40,7 +47,7 @@ class BaseMap extends Component {
     let g = d3.select("svg g");
 
     // Draw world
-    d3.json("/static/json/topo-world.json").then((shp, err) => {
+    d3.json("/static/json/topo-uk.json").then((shp, err) => {
 
       // Extract polygons and contours
       var k = Object.keys(shp.objects)[0];
@@ -121,7 +128,6 @@ class BaseMap extends Component {
         .style("fill", "none")
         .style("stroke", "red")
         .style("stroke-width", 0.2 / Math.sqrt(zoomLevel) + "px");
-
     }));
   }
 
@@ -150,6 +156,8 @@ class BaseMap extends Component {
     // 3. Distillery component renders as <circle> immediately inside <svg> (no good DOM structure alternatives)
     let activeDistillery, activeCompany;
 
+    if (this.state.persistActive) return;
+
     if (e.target.classList[0] == 'distillery') {
       let { distilleries } = this.state || [];
       activeDistillery = distilleries.filter((d) => d.name == e.target.getAttribute('data-name'))[0];
@@ -160,6 +168,24 @@ class BaseMap extends Component {
       activeDistillery = undefined;
     }
     this.setState({activeDistillery, activeCompany});
+  }
+
+  _activate(entitySection, entityName) {
+    if (entitySection == 'distilleries') {
+      this.setState({
+        activeDistillery: this.state.distilleries.filter((d) => d.name == entityName)[0],
+        activeCompany: undefined,
+        persistActive: true
+      });
+    } else if (entitySection == 'companies') {
+      this.setState({
+        activeDistillery: undefined,
+        activeCompany: this.state.companies.filter((c) => c.name == entityName)[0],
+        persistActive: true
+      });
+    } else {
+      console.error(`Unsupported entity type selected from search dropdown: ${entityName}`);
+    }
   }
 
   render() {
@@ -182,7 +208,7 @@ class BaseMap extends Component {
           </svg>
           <Tooltip distillery={this.state.activeDistillery} company={this.state.activeCompany} />
         </div>
-        <Search distilleries={this.state.distilleries} companies={this.state.companies} />
+        <Search distilleries={this.state.distilleries} companies={this.state.companies} onSelect={this._activate} />
       </>
     );
   }
