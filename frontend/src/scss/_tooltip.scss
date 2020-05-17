@@ -2,14 +2,23 @@
   position: absolute;
   top: 60px;
   left: 10px;
-  height: 300px;
   width: 400px;
   z-index: 2;
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
+  overflow: scroll;
   // mask-image: linear-gradient(to right, black 0%, black 60%, rgba(0,0,0,0) 100%);
   // pointer-events: none;
+
+  .image {
+    height: 300px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  .entity-info {
+    padding: 20px;
+    background: white;
+  }
 
   .distillery-info, .company-info {
     position: absolute;
