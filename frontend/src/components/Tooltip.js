@@ -5,22 +5,26 @@ class Tooltip extends Component {
   render() {
     const defaultBackground = "https://www.undiscoveredscotland.co.uk/usfeatures/maltwhisky/images-washstill/still18-benromach.jpg";
 
-    return !!this.props.distillery ? (
-      <div className="tooltip" style={{backgroundImage: `url(${this.props.distillery.image || defaultBackground})`}}>
+    if (!this.props.entity) return <></>;
+
+    const info = this.props.entity.info;
+
+    return this.props.entity.type == "distillery" ? (
+      <div className="tooltip" style={{backgroundImage: `url(${info.image || defaultBackground})`}}>
         <div className="entity-info">
-          <h2>{this.props.distillery.name}</h2>
-          <p>{this.props.distillery.owner}</p>
-          <p>{this.props.distillery.region}</p>
-          <p>{this.props.distillery.coordinates}</p>
-          <p>{this.props.distillery.year_established}</p>
+          <h2>{info.name}</h2>
+          <p>{info.owner}</p>
+          <p>{info.region}</p>
+          <p>{info.coordinates}</p>
+          <p>{info.year_established}</p>
         </div>
       </div>
     ) : (
-      !!this.props.company ? (
-        <div className="tooltip" style={{backgroundImage: `url(${this.props.company.image || defaultBackground})`}}>
+      this.props.entity.type == "company" ? (
+        <div className="tooltip" style={{backgroundImage: `url(${info.image || defaultBackground})`}}>
           <div className="entity-info">
-            <h2>{this.props.company.name}</h2>
-            {this.props.company.distilleries.map((d) => d.name).join(", ")}
+            <h2>{info.name}</h2>
+            {info.distilleries.map((d) => d.name).join(", ")}
           </div>
         </div>
       ) : <></>

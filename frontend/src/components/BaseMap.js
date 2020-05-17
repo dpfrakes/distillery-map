@@ -24,9 +24,8 @@ class BaseMap extends Component {
       distilleries: [],
       connections: [],
 
-      // Active status for tooltip and other viz
-      activeDistillery: {},
-      activeCompany: {},
+      // Active entity {"type": "...", "info": {...}}
+      activeEntity: {},
 
       // Propagate d3 zoom level to redraw child components
       zoomLevel: 1
@@ -113,33 +112,41 @@ class BaseMap extends Component {
     // 1. Tooltip is controlled by BaseMap
     // 2. Cannot implement onMouseOver directly on React component
     // 3. Distillery component renders as <circle> immediately inside <svg> (no good DOM structure alternatives)
-    let activeDistillery, activeCompany;
+    let activeEntity;
 
     if (this.state.persistActive) return;
 
     if (e.target.classList[0] == 'distillery') {
       let { distilleries } = this.state || [];
-      activeDistillery = distilleries.filter((d) => d.name == e.target.getAttribute('data-name'))[0];
-      activeCompany = undefined;
+      activeEntity = {
+        "type": "distillery",
+        "info": distilleries.filter((d) => d.name == e.target.getAttribute('data-name'))[0]
+      }
     } else if (e.target.classList[0] == 'company') {
       let { companies } = this.state || [];
-      activeCompany = companies.filter((d) => d.name == e.target.getAttribute('data-name'))[0];
-      activeDistillery = undefined;
+      activeEntity = {
+        type: "company",
+        info: companies.filter((d) => d.name == e.target.getAttribute('data-name'))[0]
+      }
     }
-    this.setState({activeDistillery, activeCompany});
+    this.setState({activeEntity});
   }
 
   _activate(entitySection, entityName) {
     if (entitySection == 'distilleries') {
       this.setState({
-        activeDistillery: this.state.distilleries.filter((d) => d.name == entityName)[0],
-        activeCompany: undefined,
+        activeEntity: {
+          type: "distillery",
+          info: this.state.distilleries.filter((d) => d.name == entityName)[0]
+        },
         persistActive: true
       });
     } else if (entitySection == 'companies') {
       this.setState({
-        activeDistillery: undefined,
-        activeCompany: this.state.companies.filter((c) => c.name == entityName)[0],
+        activeEntity: {
+          type: "company",
+          info: this.state.companies.filter((c) => c.name == entityName)[0]
+        },
         persistActive: true
       });
     } else {
@@ -167,7 +174,7 @@ class BaseMap extends Component {
           </svg>
         </div>
         <Search distilleries={this.state.distilleries} companies={this.state.companies} onSelect={this._activate} />
-        <Tooltip distillery={this.state.activeDistillery} company={this.state.activeCompany} />
+        <Tooltip entity={this.state.activeEntity} />
       </>
     );
   }
