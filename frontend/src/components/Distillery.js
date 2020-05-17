@@ -6,7 +6,7 @@ class Distillery extends Component {
     super(props);
     this.state = {
       coordinates: [],
-      fill: "black"
+      active: false
     };
   }
 
@@ -26,12 +26,12 @@ class Distillery extends Component {
         cx={this.state.coordinates[0]}
         cy={this.state.coordinates[1]}
         r={`${1 / Math.sqrt(this.props.zoomLevel)}px`}
-        fill={this.state.fill}
+        fill={this.state.active ? constants.colors[distillery.region] : "black"}
         data-name={distillery.name}
         data-region={distillery.region}
         data-year-est={distillery.year_established}
-        onMouseOver={() => { this.setState({fill: constants.colors[distillery.region]}) }}
-        onMouseLeave={() => { this.setState({fill: "black" }) }}
+        onMouseOver={() => { this.setState({active: true}) }}
+        onMouseLeave={() => { this.setState({active: false }) }}
       ></circle>
     );
   }

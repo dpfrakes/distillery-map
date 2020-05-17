@@ -6,7 +6,8 @@ class Company extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      coordinates: []
+      coordinates: [],
+      active: false
     };
   }
 
@@ -26,10 +27,13 @@ class Company extends Component {
           className="company"
           x={this.state.coordinates[0]}
           y={this.state.coordinates[1]}
-          width={`${5 / Math.sqrt(this.props.zoomLevel)}px`}
-          height={`${5 / Math.sqrt(this.props.zoomLevel)}px`}
+          fill={this.state.active ? "blue" : "black"}
+          width={`${3 / Math.sqrt(this.props.zoomLevel)}px`}
+          height={`${3 / Math.sqrt(this.props.zoomLevel)}px`}
           data-name={company.name}
-        />
+          onMouseOver={() => { this.setState({active: true}) }}
+          onMouseLeave={() => { this.setState({active: false }) }}
+          />
         {company.distilleries.map((d, i) => {
           return (
             <React.Fragment key={i}>
@@ -37,7 +41,7 @@ class Company extends Component {
                 className="connection"
                 d={this.props.path({type: "LineString", coordinates: [[d.latitude, d.longitude], [company.latitude, company.longitude]]})}
                 fill="none"
-                stroke="red"
+                stroke={this.state.active ? "blue" : "gray"}
                 strokeWidth={`${0.2 / Math.sqrt(this.props.zoomLevel)}px`}
               ></path>
               <Distillery distillery={d} zoomLevel={this.props.zoomLevel} />
