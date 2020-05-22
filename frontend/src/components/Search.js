@@ -14,9 +14,7 @@ class Search extends Component {
     this._onSelect = this._onSelect.bind(this);
   }
 
-  componentDidMount() {
-    // get events API call
-  }
+  componentDidMount() {}
 
   _handleType(e) {
     let q = e.target.value || '';
