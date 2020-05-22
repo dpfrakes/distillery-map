@@ -74,7 +74,7 @@ class BaseMap extends Component {
       .then((res) => {
         console.log(res.results);
         this.setState({
-          regions: Array.from(new Set(res.results.map((d) => d.region))).filter((r) => !!r),
+          regions: Array.from(new Set(res.results.map((d) => d.region))).filter((r) => !!r).map((r) => { return {'name': r}}),
           distilleries: res.results,
           distilleriesLoaded: true
         }, this._connectEntities);
@@ -183,7 +183,8 @@ class BaseMap extends Component {
           regions={this.state.regions}
           distilleries={this.state.distilleries}
           companies={this.state.companies}
-          onSelect={this._activate} />
+          onSelect={this._activate}
+          activeEntity={this.state.activeEntity} />
         <Tooltip entity={this.state.activeEntity} />
       </>
     );

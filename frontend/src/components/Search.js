@@ -19,34 +19,32 @@ class Search extends Component {
   }
 
   _handleType(e) {
-    let q = e.target.value;
+    let q = e.target.value || '';
     let autocomplete = {};
 
-    if (q) {
-      const matchingRegions = this.props.regions.filter((r) => r.toLowerCase().indexOf(q.toLowerCase()) >= 0).map((r) => {return {'name': r}});
-      if (matchingRegions.length > 0) {
-        autocomplete['regions'] = matchingRegions;
-      }
-
-      const matchingDistilleries = this.props.distilleries.filter((d) => d.name.toLowerCase().indexOf(q.toLowerCase()) >= 0);
-      if (matchingDistilleries.length > 0) {
-        autocomplete['distilleries'] = matchingDistilleries;
-      }
-
-      const matchingCompanies = this.props.companies.filter((c) => c.name.toLowerCase().indexOf(q.toLowerCase()) >= 0);
-      if (matchingCompanies.length > 0) {
-        autocomplete['companies'] = matchingCompanies;
-      }
+    const matchingRegions = this.props.regions.filter((r) => r.name.toLowerCase().indexOf(q.toLowerCase()) >= 0);
+    if (matchingRegions.length > 0) {
+      autocomplete['regions'] = matchingRegions;
     }
+
+    const matchingDistilleries = this.props.distilleries.filter((d) => d.name.toLowerCase().indexOf(q.toLowerCase()) >= 0);
+    if (matchingDistilleries.length > 0) {
+      autocomplete['distilleries'] = matchingDistilleries;
+    }
+
+    const matchingCompanies = this.props.companies.filter((c) => c.name.toLowerCase().indexOf(q.toLowerCase()) >= 0);
+    if (matchingCompanies.length > 0) {
+      autocomplete['companies'] = matchingCompanies;
+    }
+
     this.setState({q, autocomplete});
   }
 
   _onSelect(e) {
     // Complete query string and clear autocomplete results
     this.setState({
-      q: e.target.innerText,
-      autocomplete: {}
-    });
+      q: e.target.innerText
+    }, this._handleType(e));
 
     // Notify BaseMap component of active entity (and its type) via callback fn
     if (this.props.onSelect) {
