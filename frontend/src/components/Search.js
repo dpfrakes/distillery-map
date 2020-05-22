@@ -23,7 +23,7 @@ class Search extends Component {
     let autocomplete = {};
 
     if (q) {
-      const matchingRegions = this.props.regions.filter((r) => r.toLowerCase().indexOf(q.toLowerCase()) >= 0);
+      const matchingRegions = this.props.regions.filter((r) => r.toLowerCase().indexOf(q.toLowerCase()) >= 0).map((r) => {return {'name': r}});
       if (matchingRegions.length > 0) {
         autocomplete['regions'] = matchingRegions;
       }
