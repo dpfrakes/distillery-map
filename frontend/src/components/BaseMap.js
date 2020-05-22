@@ -49,7 +49,7 @@ class BaseMap extends Component {
     let g = d3.select("svg g");
 
     // Draw world
-    d3.json("/static/json/topo-uk.json").then((shp, err) => {
+    d3.json("/static/json/topo-world.json").then((shp, err) => {
 
       // Extract polygons and contours
       var k = Object.keys(shp.objects)[0];
@@ -167,7 +167,7 @@ class BaseMap extends Component {
           <button id="toggle-ui-mode" onClick={this._toggleDarkMode}>{this.state.darkMode ? "light" : "dark"}</button>
           <svg onMouseOver={this._onHover}>
             <g>
-              {this.state.companiesLoaded && this.state.companies.map((c, i) =>
+              {this.state.mapLoaded && this.state.companiesLoaded && this.state.companies.map((c, i) =>
                 <Company key={i} company={c} path={this.path} zoomLevel={this.state.zoomLevel} active={this.state.activeEntity ? this.state.activeEntity.info == c : false} />
               )}
             </g>
