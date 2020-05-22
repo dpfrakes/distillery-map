@@ -20,8 +20,9 @@ class BaseMap extends Component {
       distilleriesLoaded: false,
 
       // Data collected from BE
-      companies: [],
+      regions: [],
       distilleries: [],
+      companies: [],
       connections: [],
 
       // Active entity {"type": "...", "info": {...}}
@@ -71,7 +72,12 @@ class BaseMap extends Component {
     fetch('/api/distilleries/')
       .then((data) => data.json())
       .then((res) => {
-        this.setState({distilleries: res.results, distilleriesLoaded: true}, this._connectEntities);
+        console.log(res.results);
+        this.setState({
+          regions: Array.from(new Set(res.results.map((d) => d.region))).filter((r) => !!r),
+          distilleries: res.results,
+          distilleriesLoaded: true
+        }, this._connectEntities);
       });
 
     // Fetch company data from API
@@ -173,7 +179,11 @@ class BaseMap extends Component {
             </g>
           </svg>
         </div>
-        <Search distilleries={this.state.distilleries} companies={this.state.companies} onSelect={this._activate} />
+        <Search
+          regions={this.state.regions}
+          distilleries={this.state.distilleries}
+          companies={this.state.companies}
+          onSelect={this._activate} />
         <Tooltip entity={this.state.activeEntity} />
       </>
     );

@@ -23,6 +23,11 @@ class Search extends Component {
     let autocomplete = {};
 
     if (q) {
+      const matchingRegions = this.props.regions.filter((r) => r.toLowerCase().indexOf(q.toLowerCase()) >= 0);
+      if (matchingRegions.length > 0) {
+        autocomplete['regions'] = matchingRegions;
+      }
+
       const matchingDistilleries = this.props.distilleries.filter((d) => d.name.toLowerCase().indexOf(q.toLowerCase()) >= 0);
       if (matchingDistilleries.length > 0) {
         autocomplete['distilleries'] = matchingDistilleries;
