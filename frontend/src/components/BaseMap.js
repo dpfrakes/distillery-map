@@ -3,6 +3,7 @@ import * as topojson from "topojson-client";
 import * as d3 from "d3";
 
 import Company from "./Company";
+import Search from "./Search";
 import Tooltip from "./Tooltip";
 import constants from "../utils/constants";
 
@@ -10,14 +11,25 @@ class BaseMap extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      // Light/dark mode
       darkMode: true,
+
+      // Track status
       mapLoaded: false,
       companiesLoaded: false,
       distilleriesLoaded: false,
-      companies: [],
+
+      // Data collected from BE
+      regions: [],
       distilleries: [],
+      companies: [],
       connections: [],
-      activeDistillery: {}
+
+      // Active entity {"type": "...", "info": {...}}
+      activeEntity: {},
+
+      // Propagate d3 zoom level to redraw child components
+      zoomLevel: 1
     };
 
     this.path = d3.geoPath()
@@ -26,6 +38,7 @@ class BaseMap extends Component {
     this._onHover = this._onHover.bind(this);
     this._toggleDarkMode = this._toggleDarkMode.bind(this);
     this._connectEntities = this._connectEntities.bind(this);
+    this._activate = this._activate.bind(this);
   }
 
   componentDidMount() {
@@ -59,7 +72,12 @@ class BaseMap extends Component {
     fetch('/api/distilleries/')
       .then((data) => data.json())
       .then((res) => {
-        this.setState({distilleries: res.results, distilleriesLoaded: true}, this._connectEntities);
+        console.log(res.results);
+        this.setState({
+          regions: Array.from(new Set(res.results.map((d) => d.region))).filter((r) => !!r).map((r) => { return {'name': r}}),
+          distilleries: res.results,
+          distilleriesLoaded: true
+        }, this._connectEntities);
       });
 
     // Fetch company data from API
@@ -73,51 +91,7 @@ class BaseMap extends Component {
     svg.call(d3.zoom().on('zoom', () => {
       // Set transform based on zoom/translation
       g.attr("transform", d3.event.transform);
-      const zoomLevel = d3.event.transform.k;
-
-      // Re-draw distilleries
-      g.selectAll("circle")
-        .remove();
-      g.selectAll("circle")
-        .data(this.state.distilleries.filter((d) => !!d.latitude && !!d.longitude))
-        .enter()
-        .append("circle")
-        .attr("class", "distillery")
-        .attr("cx", (d) => constants.projection([d.latitude, d.longitude])[0])
-        .attr("cy", (d) => constants.projection([d.latitude, d.longitude])[1])
-        .attr("r", (d) => 1 / Math.sqrt(zoomLevel) + "px")
-        .attr("fill", (d) => constants.colors[d.region])
-        .attr("data-name", (d) => d.name)
-        .attr("data-region", (d) => d.region)
-        .attr("data-year-est", (d) => d.year_established);
-
-      // Re-draw all companies
-      g.selectAll("rect")
-        .remove();
-      g.selectAll("rect")
-        .data(this.state.companies.filter((c) => !!c.latitude && !!c.longitude))
-        .enter()
-        .append("rect")
-        .attr("class", "company")
-        .attr("x", (c) => constants.projection([c.latitude, c.longitude])[0])
-        .attr("y", (c) => constants.projection([c.latitude, c.longitude])[1])
-        .attr("width", (c) => 5 / Math.sqrt(zoomLevel) + "px")
-        .attr("height", (c) => 5 / Math.sqrt(zoomLevel) + "px");
-
-      // Re-draw all connections
-      // https://www.d3-graph-gallery.com/graph/connectionmap_basic.html
-      g.selectAll(".connection")
-        .remove();
-      g.selectAll(".connection")
-        .data(this.state.connections)
-        .enter()
-        .append("path")
-        .attr("class", "connection")
-        .attr("d", (p) => this.path(p))
-        .style("fill", "none")
-        .style("stroke", "red")
-        .style("stroke-width", 0.2 / Math.sqrt(zoomLevel) + "px");
-
+      this.setState({zoomLevel: d3.event.transform.k});
     }));
   }
 
@@ -144,34 +118,75 @@ class BaseMap extends Component {
     // 1. Tooltip is controlled by BaseMap
     // 2. Cannot implement onMouseOver directly on React component
     // 3. Distillery component renders as <circle> immediately inside <svg> (no good DOM structure alternatives)
+    let activeEntity;
+
+    if (this.state.persistActive) return;
+
     if (e.target.classList[0] == 'distillery') {
       let { distilleries } = this.state || [];
-      let activeDistillery = distilleries.filter((d) => d.name == e.target.getAttribute('data-name'))[0];
-      this.setState({activeDistillery});
+      activeEntity = {
+        type: "distillery",
+        info: distilleries.filter((d) => d.name == e.target.getAttribute('data-name'))[0]
+      }
+    } else if (e.target.classList[0] == 'company') {
+      let { companies } = this.state || [];
+      activeEntity = {
+        type: "company",
+        info: companies.filter((d) => d.name == e.target.getAttribute('data-name'))[0]
+      }
+    }
+    this.setState({activeEntity});
+  }
+
+  _activate(entitySection, entityName) {
+    if (entitySection == 'distilleries') {
+      this.setState({
+        activeEntity: {
+          type: "distillery",
+          info: this.state.distilleries.filter((d) => d.name == entityName)[0]
+        },
+        persistActive: true
+      });
+    } else if (entitySection == 'companies') {
+      this.setState({
+        activeEntity: {
+          type: "company",
+          info: this.state.companies.filter((c) => c.name == entityName)[0]
+        },
+        persistActive: true
+      });
     } else {
-      this.setState({activeDistillery: undefined});
+      console.error(`Unsupported entity type selected from search dropdown: ${entityName}`);
     }
   }
 
   render() {
     // Place all drawn shapes inside <g> to share transform
     return (
-      <div id="map" className={this.state.darkMode ? "dark" : ""}>
-        <div style={{position: "absolute", bottom: 20, right: 20, background: "rgba(255, 255, 255, 0.5)", width: 300, padding: 10, fontFamily: "monospace"}}>
-            <p>{this.state.companiesLoaded ? "✅ " : "..."}companies</p>
-            <p>{this.state.distilleriesLoaded ? "✅ " : "..."}distilleries</p>
-            <p>{this.state.mapLoaded ? "✅ " : "..."}map</p>
+      <>
+        <div id="map" className={this.state.darkMode ? "dark" : ""}>
+          <div style={{position: "absolute", bottom: 20, right: 20, background: "rgba(255, 255, 255, 0.5)", width: 300, padding: 10, fontFamily: "monospace"}}>
+              <p>{this.state.companiesLoaded ? "✅ " : "..."}companies</p>
+              <p>{this.state.distilleriesLoaded ? "✅ " : "..."}distilleries</p>
+              <p>{this.state.mapLoaded ? "✅ " : "..."}map</p>
+          </div>
+          <button id="toggle-ui-mode" onClick={this._toggleDarkMode}>{this.state.darkMode ? "light" : "dark"}</button>
+          <svg onMouseOver={this._onHover}>
+            <g>
+              {this.state.mapLoaded && this.state.companiesLoaded && this.state.companies.map((c, i) =>
+                <Company key={i} company={c} path={this.path} zoomLevel={this.state.zoomLevel} active={this.state.activeEntity ? this.state.activeEntity.info == c : false} />
+              )}
+            </g>
+          </svg>
         </div>
-        <button id="toggle-ui-mode" onClick={this._toggleDarkMode}>{this.state.darkMode ? "light" : "dark"}</button>
-        <svg onMouseOver={this._onHover}>
-          <g>
-            {this.state.companiesLoaded && this.state.companies.filter((c) => !!c.latitude && c.longitude).map((c, i) =>
-              <Company key={i} company={c} path={this.path} />
-            )}
-          </g>
-        </svg>
-        <Tooltip distillery={this.state.activeDistillery} />
-      </div>
+        <Search
+          regions={this.state.regions}
+          distilleries={this.state.distilleries}
+          companies={this.state.companies}
+          onSelect={this._activate}
+          activeEntity={this.state.activeEntity} />
+        <Tooltip entity={this.state.activeEntity} />
+      </>
     );
   }
 }

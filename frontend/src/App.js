@@ -4,10 +4,7 @@ import Search from './components/Search';
 
 function App() {
   return (
-    <>
-      <BaseMap />
-      <Search />
-    </>
+    <BaseMap />
   );
 }
 

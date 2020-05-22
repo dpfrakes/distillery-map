@@ -5,60 +5,72 @@ class Search extends Component {
     super(props);
     this.state = {
       q: '',
-      autocomplete: [],
+      sidebarOpen: true,
+      autocomplete: {},
       options: []
     };
-    this._handleSubmit = this._handleSubmit.bind(this);
+
     this._handleType = this._handleType.bind(this);
-    this._focusDistillery = this._focusDistillery.bind(this);
+    this._onSelect = this._onSelect.bind(this);
   }
 
-  componentDidMount() {
-    // get events API call
-  }
+  componentDidMount() {}
 
   _handleType(e) {
-    let q = e.target.value;
-    this.setState({q});
-    if (q) {
-      // TODO replace with react search
-      fetch(`/api/distilleries/?search=${q}`)
-        .then((data) => data.json())
-        .then((json) => {
-          this.setState({autocomplete: json.results.map((d) => d.name)});
-        });
-    } else {
-      this.setState({autocomplete: []});
+    let q = e.target.value || '';
+    let autocomplete = {};
+
+    const matchingRegions = this.props.regions.filter((r) => r.name.toLowerCase().indexOf(q.toLowerCase()) >= 0);
+    if (matchingRegions.length > 0) {
+      autocomplete['regions'] = matchingRegions;
     }
+
+    const matchingDistilleries = this.props.distilleries.filter((d) => d.name.toLowerCase().indexOf(q.toLowerCase()) >= 0);
+    if (matchingDistilleries.length > 0) {
+      autocomplete['distilleries'] = matchingDistilleries;
+    }
+
+    const matchingCompanies = this.props.companies.filter((c) => c.name.toLowerCase().indexOf(q.toLowerCase()) >= 0);
+    if (matchingCompanies.length > 0) {
+      autocomplete['companies'] = matchingCompanies;
+    }
+
+    this.setState({q, autocomplete});
   }
 
-  _handleSubmit(e) {
-    e.preventDefault();
-    fetch(`/api/distilleries/?search=${this.state.q}`)
-      .then((data) => data.json())
-      .then((json) => console.log(json));
-  }
-
-  _focusDistillery(e) {
+  _onSelect(e) {
+    // Complete query string and clear autocomplete results
     this.setState({
-      q: e.target.innerText,
-      autocomplete: []
-    });
+      q: e.target.innerText
+    }, this._handleType(e));
+
+    // Notify BaseMap component of active entity (and its type) via callback fn
+    if (this.props.onSelect) {
+      const entitySection = e.target.getAttribute('data-entity-section');
+      this.props.onSelect(entitySection, e.target.innerText);
+    }
   }
 
   render() {
     return (
-      <div id="search">
+      <div id="sidebar" className={this.state.sidebarOpen ? "open" : ""}>
 
-        <form onSubmit={this._handleSubmit}>
-          <input type="text" name="q" id="searchbar" autoComplete="off" value={this.state.q} onChange={this._handleType} />
+        <form onSubmit={(e) => e.preventDefault()}>
+          <input type="text" name="q" id="search" autoComplete="off" value={this.state.q} onChange={this._handleType} />
         </form>
 
-        <ul id="autocomplete-results">
-          {this.state.autocomplete.map((result, i) =>
-            <li key={i} onClick={this._focusDistillery}>{result}</li>
-          )}
-        </ul>
+        {Object.keys(this.state.autocomplete).length ? (
+          <ul id="autocomplete-results">
+            {Object.keys(this.state.autocomplete).map((a, i) =>
+              <React.Fragment key={i}>
+                <div className="autocomplete-section">{a}</div>
+                {this.state.autocomplete[a].map((b, j) =>
+                  <li key={j} onClick={this._onSelect} data-entity-section={a}>{b.name}</li>
+                )}
+              </React.Fragment>
+            )}
+          </ul>
+        ) : <></>}
 
         <ul id="options">
           {this.state.options.map((opt) => {
